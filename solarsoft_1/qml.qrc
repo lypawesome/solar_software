@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>icon/edit.png</file>
+        <file>icon/parameter.png</file>
+        <file>icon/result.png</file>
+        <file>icon/start.png</file>
+        <file>icon/system.png</file>
+        <file>icon/task.png</file>
+        <file>settings_icon/air.png</file>
+        <file>settings_icon/array.png</file>
+        <file>settings_icon/camera.png</file>
+        <file>settings_icon/cloud.png</file>
+        <file>settings_icon/location.png</file>
+        <file>settings_icon/node.png</file>
+        <file>settings_icon/shape.png</file>
+        <file>settings_icon/sun.png</file>
+        <file>settings_icon/terrain.png</file>
+        <file>settings_icon/tracker.png</file>
+        <file>tiny_icon/arrow_down.png</file>
+        <file>tiny_icon/arrow_right.png</file>
+        <file>ParaTreeView.qml</file>
+        <file>TopoTreeView.qml</file>
+    </qresource>
+</RCC>
