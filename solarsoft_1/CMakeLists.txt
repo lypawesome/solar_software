@@ -6,42 +6,59 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_subdirectory("third_party/vectorclass2")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick)
 
+if(QT_VERSION_MAJOR EQUAL 6)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core5Compat)
+endif()
+
+if(MSVC)
+    option(GENERATE_DEBUG_INFO "Create debug info, useful for debugging" ON)
+
+    if(GENERATE_DEBUG_INFO)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Z7")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG /OPT:REF /OPT:ICF")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG /OPT:REF /OPT:ICF")
+        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /DEBUG /OPT:REF /OPT:ICF")
+    endif(GENERATE_DEBUG_INFO)
+endif(MSVC)
+
 set(PROJECT_SOURCES
-        main.cpp
+        src/main.cpp
         qml.qrc
 
-        Utils.h
-        Vec3.h
-        #Vec3.cpp
+        include/Utils.h
+        include/Vec3.h
+        src/Vec3.cpp
 
-        TreeNode.h
-        TreeNode.cpp
-        TreeModel.h
-        TreeModel.cpp
-        ParaTreeViewController.h
-        ParaTreeViewController.cpp
-        TopoTreeViewController.h
-        TopoTreeViewController.cpp
+        include/TreeNode.h
+        src/TreeNode.cpp
+        include/TreeModel.h
+        src/TreeModel.cpp
+        include/ParaTreeViewController.h
+        src/ParaTreeViewController.cpp
+        include/TopoTreeViewController.h
+        src/TopoTreeViewController.cpp
 
-        Para.h
-        Para.cpp
+        include/Para.h
+        src/Para.cpp
 
         #WorldPara.h
         #WorldPara.cpp
-        SunShape.h
-        SunShape.cpp
+        include/SunShape.h
+        src/SunShape.cpp
 
         #TopoPara.h
         #TopoPara.cpp
 
-        Scene.h
-        Scene.cpp
+        include/Scene.h
+        src/Scene.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -69,6 +86,19 @@ endif()
 
 target_link_libraries(solarsoft_1
   PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(solarsoft_1
+        PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Core5Compat)
+endif()
+
+if (MSVC)
+    target_compile_options(solarsoft_1 PRIVATE "/arch:AVX2")
+else()
+    target_compile_options(solarsoft_1 PRIVATE "-mavx2" "-mfma")
+endif()
+target_link_libraries(solarsoft_1 PRIVATE VectorClass2)
+target_include_directories(solarsoft_1 PRIVATE "include")
 
 set_target_properties(solarsoft_1 PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
