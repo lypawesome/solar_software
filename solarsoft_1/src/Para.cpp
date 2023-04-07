@@ -1,5 +1,6 @@
 #include "Para.h"
 #include "SunShape.h"
+#include "config.h"
 
 #include <QVariant>
 
@@ -34,7 +35,7 @@ namespace solar
             return std::get<1>(this->params.at(name));
         }
         qDebug() << std::format("In function {}:\n Invalid param key: {}",
-                                __PRETTY_FUNCTION__, name.toStdString());
+                                PRETTY_FUNCTION_NAME, name.toStdString());
         throw std::invalid_argument("Invalid Param Key");
     }
 
@@ -191,7 +192,7 @@ namespace solar
             return std::get<2>(this->params.at(name));
         }
         qDebug() << std::format("In function {}:\n Invalid param key: {}",
-                                __PRETTY_FUNCTION__, name.toStdString());
+                                PRETTY_FUNCTION_NAME, name.toStdString());
         throw std::invalid_argument("Invalid Param Key");
     }
 
