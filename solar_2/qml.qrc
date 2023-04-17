@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>MyRect_World.qml</file>
+        <file>image/indicator_icon/arrow_down.png</file>
+        <file>image/indicator_icon/arrow_right.png</file>
+        <file>image/menu_icon/edit.png</file>
+        <file>image/menu_icon/parameter.png</file>
+        <file>image/menu_icon/result.png</file>
+        <file>image/menu_icon/start.png</file>
+        <file>image/menu_icon/system.png</file>
+        <file>image/menu_icon/task.png</file>
+        <file>image/settings_icon/air.png</file>
+        <file>image/settings_icon/array.png</file>
+        <file>image/settings_icon/camera.png</file>
+        <file>image/settings_icon/cloud.png</file>
+        <file>image/settings_icon/location.png</file>
+        <file>image/settings_icon/node.png</file>
+        <file>image/settings_icon/shape.png</file>
+        <file>image/settings_icon/sun.png</file>
+        <file>image/settings_icon/terrain.png</file>
+        <file>image/settings_icon/tracker.png</file>
+    </qresource>
+</RCC>
