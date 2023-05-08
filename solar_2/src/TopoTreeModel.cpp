@@ -188,6 +188,11 @@ QString TopoTreeModel::getType(const QModelIndex& index)          //获取该项
     return "";
 }
 
+int TopoTreeModel::getTotalNodeCnt()
+{
+    return root_node->getOffspringCount();
+}
+
 
 }
 

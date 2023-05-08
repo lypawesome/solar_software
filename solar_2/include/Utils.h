@@ -4,7 +4,7 @@
 #define _USE_MATH_DEFINES
 
 #include "config.h"
-
+#include <cmath>
 #include <bit>
 #include <limits>
 
@@ -19,7 +19,76 @@
 namespace solar
 {
 
+enum ParaPropertyId{
 
+    kNothing=0,
+    kSiteName,
+    kLongitude,
+    kLatitude,
+
+    kSunShape,      //更改sunshape的类型
+    kCSR,
+    kSigma,
+    kThetaMax,
+    kAzimuth,
+    kElevation,
+    kIrradiance,
+    kTrackable,
+
+    kAttenuation,   //更改Attenuation的类型
+    kBeta,
+
+    kPosition,
+    kAxis,
+    kAngle,
+    kPerspective,
+
+    kGrid,
+    kFill,
+    kSteps,
+    kDivision,
+    kMin,
+    kMax,
+    kFile,
+
+    kTranslation,
+    kScale,
+
+    kGeometry,      //更改Geometry的类型
+    kA,  kB,  kC,
+    kHeight,
+    kRadius,
+    kUpRadius,
+    kDownRadius,
+
+    kProfile,       //更改Profile的类型
+    kRectU, kRectV,
+    kCircleRadius, kCirclePhi,
+    kRegularEdgeLength, kRegularEdgeCnt,
+    kTriA, kTriB, kTriC,
+    kPolyPoints,
+
+    kMaterial,      //更改Material的类型
+
+    kArmature,      //tracker中更改Armature的类型
+    kPrimaryShift,
+    kPrimaryAxis,
+    kPrimaryAngles,
+    kSecondaryShift,
+    kSecondaryAxis,
+    kSecondaryAngles,
+    kFacetShift,
+    kFacetNormal,
+    kAngleDefault,
+    kDrivePrimaryR,
+    kDrivePrimaryP,
+    kDriveSecondaryP,
+    kDriveSecondaryS,
+
+    kAimingType,        //Target的属性
+    kAimingPoint
+
+};
 
 const double E = M_E;
 

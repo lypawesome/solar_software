@@ -22,6 +22,7 @@ Rectangle{
         height: 25
 
 
+
         Component
         {
             id:topology_delegate
@@ -118,6 +119,7 @@ treeview
         //topo部分的树状视图
         //!!!!!!!!!!!!!!!!!!!!!还没写好，先放着
         TopoTreeView{
+            anchors.fill: parent
             id: topo
             treeModel: topoControl.getTreeModel()
 

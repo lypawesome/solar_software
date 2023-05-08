@@ -59,6 +59,8 @@ namespace solar{
                             QSharedPointer<ParaTreeNode> child); // 在option对应的孩子节点的列表最后，加上child
         void makeChoice(const QString& option);         // 做出选择，要更改node_datas和child_nodes
 
+        int getCurrentOptionId();       //返回现在选中的选项的序号
+
     private:
         QSharedPointer<ParaTreeNode> parent_node;
         QList<QSharedPointer<ParaTreeNode>> child_nodes;       //所有孩子节点的指针

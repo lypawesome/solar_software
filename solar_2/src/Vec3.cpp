@@ -28,12 +28,12 @@ void Vec3::set_x(double input_x)
 
 void Vec3::set_y(double input_y)
 {
-    this->internal_vector.insert(0, input_y);
+    this->internal_vector.insert(1, input_y);
 }
 
 void Vec3::set_z(double input_z)
 {
-    this->internal_vector.insert(0, input_z);
+    this->internal_vector.insert(2, input_z);
 }
 
 [[nodiscard]] PURE_FUNCTION auto Vec3::operator-() const -> Vec3

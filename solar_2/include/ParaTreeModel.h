@@ -4,6 +4,7 @@
 
 /*
     右下角的树状视图
+    每个node存三个属性：name名字，para参数，type_id参数类型的枚举值
 */
 
 #include <QAbstractItemModel>
@@ -11,6 +12,7 @@
 
 #include "Para.h"
 #include "ParaTreeNode.h"
+#include "Utils.h"
 
 
 namespace solar{
@@ -35,10 +37,11 @@ namespace solar{
         enum nodeRoles
         {
             NAME = Qt::UserRole + 1,
-            PARA
+            PARA,
+            TYPE_ID        //表示每个参数的类型
         };
     public:
-        ParaTreeModel(TreeModelType _model_type, QObject* parent = nullptr, QSharedPointer<Para> _para=nullptr);
+        ParaTreeModel(TreeModelType _model_type, QSharedPointer<Para> _para=nullptr, QObject* parent = nullptr);
         ~ParaTreeModel();
 
 
@@ -68,15 +71,18 @@ namespace solar{
         QList<QString> getNodeOptionList( const QModelIndex& index);    // 获得这一节点的所有option
         void makeChoice(const QModelIndex& index, QString option);      // 做出选择
 
+        int getCurrentOptionId(const QModelIndex& index);  //返回对应的节点中，当前选中的选项在选项列表中的下标
+
         //建立参数----这部分也可能会更改
     private:
 
+        //建立的新节点：data1：name，data2：para，data3：type_id
         //建立节点，若parent_state为OPTIONAL，则新创立的节点放到parent节点的option_childnodes[parent_option]列表内，
         //若同时is_current_option_child为true，则把心窗里的节点放在option_childnodes下的同时，也放到child_nodes下
         //注意：parent_state是通过parent->getState()获得的
         QSharedPointer<ParaTreeNode> createNode(
                                             QSharedPointer<ParaTreeNode> parent,
-                                            QVariant data1, QVariant data2,
+                                            QVariant data1, QVariant data2,QVariant data3=kNothing,
                                             ParaState state=QUIET,
                                             bool is_current_option_child = false,
                                             QString parent_option = "");
@@ -85,6 +91,8 @@ namespace solar{
 
         void updatePara();      //更新para中的某个属性
         void updataSunPara();   //当model_type为SUN时，更新属性
+
+
     private:
         QSharedPointer<ParaTreeNode> root_node;   //树状视图中的根节点
 

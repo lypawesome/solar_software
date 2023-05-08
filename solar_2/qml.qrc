@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>MyRect_World.qml</file>
+        
         <file>image/indicator_icon/arrow_down.png</file>
         <file>image/indicator_icon/arrow_right.png</file>
         <file>image/menu_icon/edit.png</file>

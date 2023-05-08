@@ -10,172 +10,825 @@ namespace solar
 
     /*
     ==================================Location====================================
+    kSiteName,
+    kLongitude,
+    kLatitude,
     */
-    void Location::setPara(const std::string& name, const QVariant& value)
+    void Location::setPara(const int property_type, const QVariant& value)
     {
-        std::any temp_value;
-        if(name=="site_name") temp_value = (value.toString()).toStdString();
-        else temp_value = value.toDouble();
-
-        params[name] = temp_value;
+        switch(property_type)
+        {
+        case kSiteName:
+        {
+            site_name_ = value.toString().toStdString();
+            break;
+        }
+        case kLongitude:
+        {
+            longitude_ = value.toDouble();
+            break;
+        }
+        case kLatitude:
+        {
+            latitude_ = value.toDouble();
+            break;
+        }
+        default:
+        {
+            throw "ERROR::Location::setPara()::NO SUCH PARA_PROPERTY:" + std::to_string(property_type);
+        }
+        }
     }
-    auto Location::getPara(const std::string& name) const -> QVariant
+    auto Location::getPara(const int property_type) const -> QVariant
     {
-        QVariant ret;
-        if(name == "site_name") ret = QString::fromStdString(std::any_cast<std::string>(params.at(name)));
+        QVariant ret ;
+        switch (property_type)
+        {
+        case kSiteName:
+        {
+            ret = QString::fromStdString(site_name_);
+            break;
+        }
+        case kLongitude:
+        {
+            ret = longitude_;
+            break;
+        }
+        case kLatitude:
+        {
+            ret = latitude_;
+            break;
+        }
+        default:
+        {
+            throw "ERROR::Location::getPara()::NO SUCH PARA_PROPERTY:" + std::to_string(property_type);
+            break;
+        }
+        }
+
         return ret;
     }
 
     void Location::testPrint() const
     {
-        qDebug() << std::format("WorldPara::Location: site_name={}, "
+        qDebug() << std::format("Location: site_name={}, "
                             "longitude={},  latitude={}",
-                            std::any_cast<std::string>(getPara("site_name")),
-                            std::any_cast<double>(getPara("longitude")),
-                            std::any_cast<double>(getPara("latitude")));
+                            site_name_, longitude_, latitude_);
     }
 
     /*
     ==========================================Sun===============================================
-
+    kSunShape,
+    kCSR,
+    kSigma,
+    kThetaMax,
+    kAzimuth,
+    kElevation,
+    kIrradiance,
+    kTrackable,
     */
 
-    void Sun::setPara(const std::string& name, const QVariant& value)
+    void Sun::setPara(const int property_type, const QVariant& value)
     {
-        //if(name == "sunshape" || name == "position")    //尽量不让QVariant指向std智能指针
-        //    params[name] = value;
-        if(name == "azimuth" || name=="elevation" || name=="irradiance"||name=="trackable")
+        SunShapeType current_sunshape_type = sunshape_->getType();
+        switch(property_type)
         {
+        case kSunShape:         //重新分配sunshape
+        {
+            int next_sunshape_type = value.toInt();
+            if(current_sunshape_type == next_sunshape_type) break;
 
-            std::shared_ptr<SunPosition> position =
-                std::any_cast<std::shared_ptr<SunPosition>>(params.at(name));
-            std::any temp_value;
-            if(name=="trackable") temp_value = value.toBool();
-            else temp_value = value.toDouble();
-            position->setPara(name, temp_value);
-        }
-        else if(name=="csr" || name =="sigma" || name == "theta_max")
-        {
-            std::shared_ptr<SunShape> sunshape =
-                std::any_cast<std::shared_ptr<SunShape>>(params.at(name));
-            int type = sunshape->getType();
-            switch(type)
+            switch (next_sunshape_type)
             {
-            case GAUSSIAN:
-                if(name != "sigma")
-                    throw std::invalid_argument("Invalid name in Func setPara()::not sigma in gaussion sunshape");
-                break;
-            case BUIE:
-                if(name != "csr")
-                    throw std::invalid_argument("Invalid name in Func setPara()::not csr in gaussion sunshape");
-                break;
-            case PILLBOX:
-                if(name != "theta_max")
-                    throw std::invalid_argument("Invalid name in Func setPara()::not theta_max in gaussion sunshape");
+            case kSunShapeBuie:     sunshape_ = std::make_shared<BuieSunShape>();        break;
+            case kSunShapeGaussian: sunshape_ = std::make_shared<GaussianSunShape>();    break;
+            case kSunShapePillbox:  sunshape_ = std::make_shared<PillboxSunShape>();     break;
+            default:
+                throw "ERROR::NO SUCH SUNSHAPE TYPE IN Sun::setPara() : "
+                    +std::to_string(next_sunshape_type) ;
                 break;
             }
-            sunshape->setPara( value.toDouble() );
         }
+        case kCSR:
+        case kSigma:
+        case kThetaMax:
+        {
+            if(    (property_type == kCSR && current_sunshape_type == kSunShapeBuie)
+                || (property_type == kThetaMax && current_sunshape_type == kSunShapePillbox)
+                || (property_type == kSigma && current_sunshape_type == kSunShapeGaussian) )
+            {
+                sunshape_->setPara(value.toDouble());
+            }
+            else {
+                throw "ERROR::Sun::setPara()::property_type not match current sunshape_type: property_type="
+                    +std::to_string(property_type)
+                    +" sunshape_type=" + std::to_string(current_sunshape_type);
+            }
+            break;
+        }
+        case kAzimuth:
+        case kElevation:
+        case kIrradiance:
+        case kTrackable:
+        {
+            sun_position_->setPara(property_type,value);
+            break;
+        }
+        default:
+        {
+            throw "ERROR::Sun::setPara()::NO SUCH PARA_PROPERTY: "+std::to_string(property_type);
+            break;
+        }
+        }
+
     }
-    auto Sun::getPara(const std::string& name) const -> QVariant
-    {
-        //if(name=="sunshape" || name=="position")
-        //    return params.at(name);
-        if(name == "azimuth" || name=="elevation" || name=="irradiance"||name=="trackable")
-        {
 
-            std::shared_ptr<SunPosition> position =
-                std::any_cast<std::shared_ptr<SunPosition>>(params.at("position"));
-            QVariant ret;
-            if(name == "trackable") ret = std::any_cast<bool>(position->getPara(name));
-            else ret = std::any_cast<double>(position->getPara(name));
-            return ret;
-        }
-        else if(name=="csr" || name =="sigma" || name == "theta_max")
+    auto Sun::getPara(const int property_type) const -> QVariant
+    {
+        QVariant ret;
+
+        SunShapeType current_sunshape_type = sunshape_->getType();
+        switch(property_type)
         {
-            std::shared_ptr<SunShape> sunshape =
-                std::any_cast<std::shared_ptr<SunShape>>(params.at("sunshape"));
-            int type = sunshape->getType();
-            switch(type)
-            {
-            case GAUSSIAN:
-                if(name != "sigma")
-                    throw std::invalid_argument("Invalid name in Func setPara()::not sigma in gaussion sunshape");
-                break;
-            case BUIE:
-                if(name != "csr")
-                    throw std::invalid_argument("Invalid name in Func setPara()::not csr in gaussion sunshape");
-                break;
-            case PILLBOX:
-                if(name != "theta_max")
-                    throw std::invalid_argument("Invalid name in Func setPara()::not theta_max in gaussion sunshape");
-                break;
-            }
-            return sunshape->getPara();
+        case kSunShape:         //这里返回sunshape的类型
+        {
+            ret = current_sunshape_type;
+            break;
         }
-        return -1 ;
+        case kCSR:
+        case kSigma:
+        case kThetaMax:
+        {
+            //这里有问题，不知为啥会运行到throw
+            qDebug()<<property_type<<"  "<<current_sunshape_type;
+            if(    (property_type == kCSR && current_sunshape_type == kSunShapeBuie)
+                || (property_type == kThetaMax && current_sunshape_type == kSunShapePillbox)
+                || (property_type == kSigma && current_sunshape_type == kSunShapeGaussian) )
+            {
+                qDebug()<<"....";
+                ret = sunshape_->getPara();
+            }
+            else {
+
+                throw "ERROR::Sun::getPara()::property_type not match current sunshape_type: property_type="
+                    + std::to_string(property_type)
+                    +" sunshape_type="+std::to_string(current_sunshape_type);
+            }
+            break;
+        }
+        case kAzimuth:
+        case kElevation:
+        case kIrradiance:
+        case kTrackable:
+        {
+            ret = sun_position_->getPara(property_type);
+            break;
+        }
+        default:
+        {
+            throw "ERROR::Sun::getPara()::NO SUCH PARA_PROPERTY: "+std::to_string(property_type);
+            break;
+        }
+        }
+
+        return ret;
     }
 
     void Sun::testPrint() const
     {
-
-        std::shared_ptr<SunShape> sunshape = std::any_cast<std::shared_ptr<SunShape>>(params.at("sunshape"));
-
-        qDebug() << std::format(
-            "WorldPara::Sun: azimuth={}, elevation={}, irradiance={},"
-            " trackable={}, sun_shape_type={}, sun_shape.para={}",
-            std::any_cast<double>(getPara("azimuth")),      std::any_cast<double>(getPara("elevation")),
-            std::any_cast<double>(getPara("irradiance")),   std::any_cast<bool>(getPara("trackable")),
-            (int)(sunshape->getType()),                     //这里返回的是枚举，需要转换为int型
-            std::any_cast<double>(sunshape->getPara())
-            );
+        qDebug() << "Sun::";
+        sunshape_->testPrint();
+        sun_position_->testPrint();
     }
 
-    /*
-    ============================================Air============================================
-    */
 
-    void Air::setPara(const std::string& name, const QVariant& value)
-    {
-        //if(name=="attenuation")     //表示value指向一个Attenuation智能指针
-        //    params[name] = value;
-        if(name=="beta")       //修改ExponenatialAttenuation下的beta成员
-        {
-            std::shared_ptr<Attenuation> attenuation
-                = std::any_cast<std::shared_ptr<Attenuation>>(params.at("attenuation"));
-            int type = attenuation->getType();
-            if(type == EXPONENTIAL){
-                auto exponential_attenuation =
-                    std::dynamic_pointer_cast<ExponentialAttenuation>(attenuation);
-                exponential_attenuation->setPara(value.toDouble());
-            }
-        }
-    }
-    auto Air::getPara(const std::string& name) const -> QVariant
-    {
-        //if(name=="attenuation")
-        //    return params.at(name);
-        if(name == "beta")
-        {
-            std::shared_ptr<Attenuation> attenuation
-                = std::any_cast<std::shared_ptr<Attenuation>>(params.at("attenuation"));
-            int type = attenuation->getType();
-            if(type == EXPONENTIAL){
-                auto exponential_attenuation =
-                    std::dynamic_pointer_cast<ExponentialAttenuation>(attenuation);
-                return exponential_attenuation->getPara();
-            }
-        }
-        return -1;
-    }
-    void Air::testPrint() const
-    {
-        std::shared_ptr<Attenuation> attenuation
-            = std::any_cast<std::shared_ptr<Attenuation>>(params.at("attenuation"));
-        qDebug() << std::format(
-            "WorldPara::Air: air_model_type={}",
-            (int)(attenuation->getType())   );
-    }
+//    /*
+//    ============================================Air============================================
+//    kAttenuation,
+//    kBeta
+//    */
+
+//    void Air::setPara(const int property_type, const QVariant& value)
+//    {
+//        AttenuationType current_attenuation_type = attenuation_->getType();
+//        switch(property_type)
+//        {
+//        case kAttenuation:          //更改Attenuation的类型
+//        {
+//            int next_attenuation_type = value.toInt();
+//            if(current_attenuation_type == next_attenuation_type) break;
+
+//            switch (next_attenuation_type)
+//            {
+//            case kAttenuationVacuum: attenuation_ = std::make_shared<VacuumAttenuation>(); break;
+//            case kAttenuationExponential: attenuation_ = std::make_shared<ExponentialAttenuation>(); break;
+//            case kAttenuationCustom: attenuation_ = std::make_shared<CustomAttenuation>(); break;
+//            default: throw "ERROR::Air::setPara()::no such attenuation type: "+std::to_string(next_attenuation_type);  break;
+//            }
+//            break;
+//        }
+//        case kBeta:
+//        {
+//            if(current_attenuation_type == kAttenuationExponential)
+//            {
+//                attenuation_->setPara(value.toDouble());
+//            }
+//            else{
+//                throw "ERROR::Air::setPara()::property_type not match attenuation_type: property_type="
+//                    + std::to_string(property_type)
+//                    +" attenuation_type="+std::to_string(current_attenuation_type);
+//            }
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Air::setPara()::NO SUCH PARA_PROPERTY: "+std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    auto Air::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        AttenuationType current_attenuation_type = attenuation_->getType();
+//        switch(property_type)
+//        {
+//        case kAttenuation:
+//        {
+//            ret = current_attenuation_type;
+//            break;
+//        }
+//        case kBeta:
+//        {
+//            if(current_attenuation_type == kAttenuationExponential)
+//            {
+//                ret = attenuation_->getPara();
+//            }
+//            else{
+
+//                throw "ERROR::Air::getPara()::property_type not match attenuation_type: property_type="
+//                    + std::to_string(property_type)
+//                        +" attenuation_type="+std::to_string(current_attenuation_type);
+//            }
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Air::getPara()::NO SUCH PARA_PROPERTY: "+std::to_string(property_type);
+//            break;
+//        }
+//        }
+//        return ret;
+//    }
+
+//    void Air::testPrint() const
+//    {
+//        qDebug() << "Air::";
+//        attenuation_->testPrint();
+//    }
+
+//    /*
+//     * =========================================Camera===========================================
+//     *
+//     *     kPosition,
+//    kAxis,
+//    kAngle,
+//    kPerspective,
+//    */
+//    void Camera::setPara(const int property_type, const QVariant& value)
+//    {
+//        switch(property_type)
+//        {
+//        case kPosition:
+//        {
+//            position_ = value.value<Vec3>();
+//            break;
+//        }
+//        case kAxis:
+//        case kAngle:
+//        {
+//            rotation_.setPara(property_type, value);
+//            break;
+//        }
+//        case kPerspective:
+//        {
+//            perspective_ = value.toBool();
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Camera::setPara()::no such property_type: "+std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+
+//    auto Camera::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        switch(property_type)
+//        {
+//        case kPosition:
+//        {
+//            ret = QVariant::fromValue(position_);
+//            break;
+//        }
+//        case kAxis:
+//        case kAngle:
+//        {
+//            ret = rotation_.getPara(property_type);
+//            break;
+//        }
+//        case kPerspective:
+//        {
+//            ret = perspective_;
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Camera::setPara()::no such property_type: "+std::to_string(property_type);
+//            break;
+//        }
+//        }
+//        return ret;
+//    }
+//    void Camera::testPrint() const
+//    {
+//        qDebug() << std::format("Camera::position=({},{},{}),perspective={}",
+//                                position_.x(), position_.y(), position_.z(), perspective_);
+//        rotation_.testPrint();
+//    }
+
+//    /*
+//     * ===========================================Terrain==============================================
+//     *      kGrid,
+//            kFill,
+//            kSteps,
+//            kDivision,
+//            kMin,
+//            kMax,
+//            kFile,
+//    */
+//    void Terrain::setPara(const int property_type, const QVariant& value)
+//    {
+//        switch (property_type)
+//        {
+//        case kGrid:
+//        case kFill:
+//        case kSteps:
+//        case kDivision:
+//        case kMin:
+//        case kMax:
+//        case kFile:
+//        {
+//            grid_->setPara(property_type,value);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Terrain::setPara()::no such property_type: "
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+
+//    }
+//    auto Terrain::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        switch (property_type)
+//        {
+//        case kGrid:
+//        case kFill:
+//        case kSteps:
+//        case kDivision:
+//        case kMin:
+//        case kMax:
+//        case kFile:
+//        {
+//            ret = grid_->getPara(property_type);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Terrain::getPara()::no such property_type: "
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+
+//        return ret;
+//    }
+//    void Terrain::testPrint() const
+//    {
+//        qDebug() <<"Terrain::";
+//        grid_->testPrint();
+//    }
+
+//    /*
+//     * ==============================================Cloud==================================================
+//     *      kGrid,
+//            kFill,
+//            kSteps,
+//            kDivision,
+//            kMin,
+//            kMax,
+//            kFile,
+//    */
+//    void Cloud::setPara(const int property_type, const QVariant& value)
+//    {
+//        switch (property_type)
+//        {
+//        case kGrid:
+//        case kFill:
+//        case kSteps:
+//        case kDivision:
+//        case kMin:
+//        case kMax:
+//        case kFile:
+//        {
+//            grid_->setPara(property_type,value);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Cloud::setPara()::no such property_type: "
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    auto Cloud::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        switch (property_type)
+//        {
+//        case kGrid:
+//        case kFill:
+//        case kSteps:
+//        case kDivision:
+//        case kMin:
+//        case kMax:
+//        case kFile:
+//        {
+//            ret = grid_->getPara(property_type);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Cloud::getPara()::no such property_type: "
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+
+//        return ret;
+//    }
+//    void Cloud::testPrint() const
+//    {
+//        qDebug() <<"Cloud::";
+//        grid_->testPrint();
+//    }
+
+//    /*
+//     * =====================================Node======================================
+//     *      kTranslation,
+//     *      kAxis,
+//     *      kAngle
+//            kScale,
+//    */
+//    void Node::setPara(const int property_type, const QVariant& value)
+//    {
+//        switch(property_type)
+//        {
+//        case kTranslation:
+//        {
+//            translation_ = value.value<Vec3>();
+//            break;
+//        }
+//        case kAxis:
+//        case kAngle:
+//        {
+//            rotation_.setPara(property_type,value);
+//            break;
+//        }
+//        case kScale:
+//        {
+//            scale_ = value.value<Vec3>();
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Node::setPara()::no such property_type"
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    auto Node::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        switch(property_type)
+//        {
+//        case kTranslation:
+//        {
+//            ret = QVariant::fromValue(ret);
+//            break;
+//        }
+//        case kAxis:
+//        case kAngle:
+//        {
+//            ret = rotation_.getPara(property_type);
+//            break;
+//        }
+//        case kScale:
+//        {
+//            ret = QVariant::fromValue(scale_);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Node::getPara()::no such property_type"
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+//        return ret;
+//    }
+//    void Node::testPrint() const
+//    {
+//        qDebug() << std::format("Node::translation=({},{},{}),scale=({},{},{})",
+//                                translation_.x(),translation_.y(),translation_.z(),
+//                                scale_.x(), scale_.y(), scale_.z());
+//        rotation_.testPrint();
+//    }
+
+//    /*
+//     * ======================================Shape=======================================
+//     * ！！！！！没有写完，还需要补充
+//     *  kGeometry, kA, kB, kC, kFile
+//        kProfile, kRectU, kRectV,kCircleRadius, kCirclePhi,kRegularEdgeLength, kRegularEdgeCnt,
+//                    kTriA, kTriB, kTriC, kPolyPoints,
+//        kMaterial
+//    */
+//    void Shape::setPara(const int property_type, const QVariant& value)
+//    {
+//        switch(property_type)
+//        {
+//        case kGeometry:     //更换Geometry的类别
+//        {
+//            GeometryType current_geometry_type = geometry_->getType();
+//            int next_geometry_type = value.toInt();
+//            if(current_geometry_type == next_geometry_type) break;
+
+//            switch(next_geometry_type)
+//            {
+//            case kGeometryPlanar:       geometry_ = std::make_shared<Planar>();   break;
+//            case kGeometryParabolic:    geometry_ = std::make_shared<Parabolic>(); break;
+//            case kGeometryHyperbolic:   geometry_ = std::make_shared<Hyperbolic>(); break;
+//            case kGeometryElliptic:     geometry_ = std::make_shared<Elliptic>(); break;
+//            case kGeometryBSpline:      geometry_ = std::make_shared<BSpline>(); break;
+//            case kGeometryMap:       geometry_ = std::make_shared<Map>(); break;
+//            default:
+//                throw "ERROR::Shape::setPara()::no such geometry type"
+//                    + std::to_string(next_geometry_type);
+//                break;
+//            }
+
+//            break;
+//        }
+//        case kProfile:      //更换Profile的类别：kProfileRectangular,kProfileCircular,kProfileRegular,kProfileTriangle, kProfilePolygon
+//        {
+//            ProfileType current_profile_type = profile_->getType();
+//            int next_profile_type = value.toInt();
+//            if(current_profile_type == next_profile_type) break;
+
+//            switch (next_profile_type)
+//            {
+//            case kProfileRectangular:   profile_ = std::make_shared<Rectangular>(); break;
+//            case kProfileCircular:      profile_ = std::make_shared<Circular>(); break;
+//            case kProfileRegular:       profile_ = std::make_shared<Regular>(); break;
+//            case kProfileTriangle:      profile_ = std::make_shared<Triangle>(); break;
+//            case kProfilePolygon:       profile_ = std::make_shared<Polygon>(); break;
+//            default:
+//                throw "ERROR::Shape::setPara()::no such profile type"
+//                    + std::to_string(next_profile_type);
+//                break;
+//            }
+
+//            break;
+//        }
+//        case kMaterial:     //！！！！先空着，明天往往师姐
+//        {
+//            break;
+//        }
+//        case kA:
+//        case kB:
+//        case kC:
+//        case kFile:
+//        {
+//            geometry_->setPara(property_type,value);
+//            break;
+//        }
+//        case kRectU:
+//        case kRectV:
+//        case kCircleRadius:
+//        case kCirclePhi:
+//        case kRegularEdgeLength:
+//        case kRegularEdgeCnt:
+//        case kTriA:
+//        case kTriB:
+//        case kTriC:
+//        case kPolyPoints:
+//        {
+//            profile_->setPara(property_type,value);
+//            break;
+//        }
+
+//        default:
+//        {
+//            throw "ERROR::Shape::setPara()::no such property type: "
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    auto Shape::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        switch(property_type)
+//        {
+//        case kGeometry:
+//        {
+//            GeometryType current_geometry_type = geometry_->getType();
+//            ret = current_geometry_type;
+//            break;
+//        }
+//        case kProfile:
+//        {
+//            ProfileType current_profile_type = profile_->getType();
+//            ret = current_profile_type;
+//            break;
+//        }
+//        case kMaterial:     //！！！！先空着，明天往往师姐
+//        {
+//            break;
+//        }
+//        case kA:
+//        case kB:
+//        case kC:
+//        case kFile:
+//        {
+//            ret = geometry_->getPara(property_type);
+//            break;
+//        }
+//        case kRectU:
+//        case kRectV:
+//        case kCircleRadius:
+//        case kCirclePhi:
+//        case kRegularEdgeLength:
+//        case kRegularEdgeCnt:
+//        case kTriA:
+//        case kTriB:
+//        case kTriC:
+//        case kPolyPoints:
+//        {
+//            ret = profile_->getPara(property_type);
+//            break;
+//        }
+
+//        default:
+//        {
+//            throw "ERROR::Shape::getPara()::no such property type: "
+//                + std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    void Shape::testPrint() const
+//    {
+
+//    }
+
+//    /*
+//     * ======================================Tracker=======================================
+//    */
+//    void Tracker::setPara(const int property_type, const QVariant& value)
+//    {
+//        switch(property_type)
+//        {
+//        case kArmature:         // 更改Armature的类型
+//        {
+//            ArmatureType current_armature_type = armature_->getType();
+//            int next_armature_type = value.toInt();
+//            if(current_armature_type == next_armature_type) break;
+//            switch (next_armature_type) {
+//            case kOneAxis:  armature_ = std::make_shared<OneAxis>();        break;
+//            case kTwoAxis:  armature_ = std::make_shared<TwoAxis>();        break;
+//            case kTwoAxisWithDrives: armature_ = std::make_shared<TwoAxisWithDrives>();     break;
+//            default:
+//                throw "ERROR::Tracker::setPara()::no such armature type: "
+//                    +std::to_string(next_armature_type);
+//                break;
+//            }
+//            break;
+//        }
+//        case kPrimaryShift:
+//        case kPrimaryAxis:
+//        case kPrimaryAngles:
+//        case kSecondaryShift:
+//        case kSecondaryAxis:
+//        case kSecondaryAngles:
+//        case kFacetShift:
+//        case kFacetNormal:
+//        case kAngleDefault:
+//        case kDrivePrimaryR:
+//        case kDrivePrimaryP:
+//        case kDriveSecondaryP:
+//        case kDriveSecondaryS:
+//        {
+//            armature_->setPara(property_type,value);
+//            break;
+//        }
+//        case kAimingType:
+//        case kAimingPoint:
+//        case kAngle:
+//        {
+//            target_->setPara(property_type,value);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Tracker::setPara()::no such property type: "
+//                +std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    auto Tracker::getPara(const int property_type) const -> QVariant
+//    {
+//        QVariant ret;
+//        switch(property_type)
+//        {
+//        case kArmature:         // 更改Armature的类型
+//        {
+//            ArmatureType current_armature_type = armature_->getType();
+//            ret = current_armature_type;
+//            break;
+//        }
+//        case kPrimaryShift:
+//        case kPrimaryAxis:
+//        case kPrimaryAngles:
+//        case kSecondaryShift:
+//        case kSecondaryAxis:
+//        case kSecondaryAngles:
+//        case kFacetShift:
+//        case kFacetNormal:
+//        case kAngleDefault:
+//        case kDrivePrimaryR:
+//        case kDrivePrimaryP:
+//        case kDriveSecondaryP:
+//        case kDriveSecondaryS:
+//        {
+//            ret = armature_->getPara(property_type);
+//            break;
+//        }
+//        case kAimingType:
+//        case kAimingPoint:
+//        case kAngle:
+//        {
+//            ret = target_->getPara(property_type);
+//            break;
+//        }
+//        default:
+//        {
+//            throw "ERROR::Tracker::setPara()::no such property type: "
+//                +std::to_string(property_type);
+//            break;
+//        }
+//        }
+//    }
+//    void Tracker::testPrint() const
+//    {
+
+//    }
+
+//    /*
+//     * ======================================Array=======================================
+//    */
+//    void Array::setPara(const int property_type, const QVariant& value)
+//    {
+
+//    }
+//    auto Array::getPara(const int property_type) const -> QVariant
+//    {
+
+//    }
+//    void Array::testPrint() const
+//    {
+
+//    }
+
 
 
 } // namespace std

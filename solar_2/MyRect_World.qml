@@ -49,6 +49,8 @@ Rectangle{
 
                 hoverEnabled: true
                 onClicked:{
+
+                    lower_st.currentIndex = index
                     //!!!!!!!!!!!!!!!!!!!!!!!!!等下方treeview写好再改!!!!!!!!!!!!!!!!!!!!!!!!!!
                     //parent.color = "red"
                     //parast.currentIndex = index

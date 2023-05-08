@@ -9,7 +9,24 @@ TopoTreeNode::TopoTreeNode(const QList<QVariant> &data,
 {
     parent_node = parent;
     node_datas = data;
-    //para_tree_controller = nullptr;   //也可以在建立Topo部分的节点时，就建立这里的视图
+
+    //处理对应的ParaTreeModel
+//    QSharedDataPointer<Para> para;
+//    int para_model_type = getParaModelType();
+//    switch (para_model_type) {
+//    case NODE:
+//        //para = QSharedPointer<Node>()
+//        break;
+//    case SHAPE:
+//        break;
+//    case TRACKER:
+//        break;
+//    case ARRAY:
+//        break;
+//    default:
+//        break;
+//    }
+    //para_tree_model = QSharedDataPointer<ParaTreeModel>(new ParaTreeModel(getParaModelType(),para));
 }
 
 
@@ -87,6 +104,27 @@ void TopoTreeNode::setNodeData(QVariant data, int column)    //设置该节点�
         throw "invalid column in Func: TopoTreeNode::setNodeData(data,column)";
     }
     node_datas[column] = data;
+}
+
+
+int TopoTreeNode::getParaTreeId(const QSharedPointer<ParaTreeViewController>& para_tree_control)
+{
+    return para_tree_control->getParaTreeModelId(para_tree_model);
+}
+int TopoTreeNode::getParaModelType()    //返回的是TreeModelType的枚举
+{
+    QVariant type = data(1);
+    return type.toInt()-0 + NODE;
+}
+//所有子孙后代的个数，不包括自身
+int TopoTreeNode::getOffspringCount()
+{
+    int cnt = childCount();
+    for(auto child : child_nodes)
+    {
+        cnt+=child->getOffspringCount();
+    }
+    return cnt;
 }
 
 }//namespace solar

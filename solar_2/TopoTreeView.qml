@@ -19,10 +19,10 @@ Rectangle{
 
     function updateSelection(index)
     {
-        if(sel.currentHasSelection){
-           topoControl.appendChild(sel.currentIndex,index)
+        if(topo_sel.currentHasSelection){
+           topoControl.appendChild(topo_sel.currentIndex,index)
             //！！！这里这句代码，不起作用
-           topoTreeview.expandToIndex(sel.currentIndex)    //添加孩子节点后，要把父节点展开
+           topoTreeview.expandToIndex(topo_sel.currentIndex)    //添加孩子节点后，要把父节点展开
         }
         else{
             console.log("no selection")
@@ -30,7 +30,7 @@ Rectangle{
     }
 
     ItemSelectionModel{     //添加自定义选中
-        id:sel
+        id:topo_sel
         model:topoTreeview_rect.treeModel
         property bool currentHasSelection: false     //是否有选中的项---一开始是没有的点击之后才有
 
@@ -60,7 +60,7 @@ Rectangle{
 
 
 
-        selectionModel: sel
+        selectionModel: topo_sel
         //delegate: treeview_item_delegate
 
 //        delegate: TreeViewDelegate{
@@ -125,7 +125,7 @@ Rectangle{
                 id: topoTreeviewItem_rect
                 anchors.fill:parent
                 anchors.leftMargin: 5
-                color: sel.currentIndex===topoTreeview.index(row,column)?"skyblue" :
+                color: topo_sel.currentIndex===topoTreeview.index(row,column)?"skyblue" :
                                            (topoTreeviewItem_mousearea.containsMouse?"lightgray":"transparent")
 
                 property var indicatorsrc:["arrow_down.png", "arrow_right.png"]
@@ -183,8 +183,8 @@ Rectangle{
                         hoverEnabled:true
 
                         onClicked: {
-                            sel.setCurrentIndex(topoTreeview.index(row,column),0x0010)
-                            sel.currentHasSelection= true
+                            topo_sel.setCurrentIndex(topoTreeview.index(row,column),0x0010)
+                            topo_sel.currentHasSelection= true
 
                             console.log(row+" "+column+" "+label.text)
                         }

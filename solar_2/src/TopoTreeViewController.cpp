@@ -63,5 +63,10 @@ void TopoTreeViewController::appendChild(const QModelIndex& index,int type)
     tree_model->appendChild(index,list,1);
 }
 
+int TopoTreeViewController::getTotalNodeCnt()
+{
+    return tree_model->getTotalNodeCnt();
+}
+
 
 } //namespace soalr

@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     solar::Scene scene; // 要给scene类设置Q_OBJECT
     engine.rootContext()->setContextProperty("topoControl",
                                              scene.topo_tree_control.get());    //这里传入的应该是普通指针
-
+    engine.rootContext()->setContextProperty("paraControl",
+                                             scene.para_tree_control.get());
 
 
     engine.load(url);

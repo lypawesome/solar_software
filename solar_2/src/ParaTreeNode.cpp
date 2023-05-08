@@ -25,7 +25,7 @@ namespace solar
     {
         for (int index = 0; index < child_nodes.size(); index++)
         {
-            child_nodes.value(index)->deletaAllChild();
+            child_nodes.value(index)->deletaAllChild();         //孩子节点用的是智能指针，只要不主动删除，是不会释放空间的
            // child_nodes.value(index).clear();               //会把地址也删去
         }
         child_nodes.clear();
@@ -89,7 +89,13 @@ namespace solar
         {
             throw "invalid column in Func: ParaTreeNode::setNodeData(data,column)";
         }
+
+        qDebug()<<"ParaTreeNode中修改参数成功！";
+        qDebug()<<"\t 原来参数为：" << node_datas[column].toString();
+
         node_datas[column] = data;
+
+        qDebug() <<"\t 新的参数为："<<data.toString();
     }
 
     void ParaTreeNode::setState(ParaState _state)        //设置该节点的状态:不可编辑不可选、可编辑、可选择
@@ -144,6 +150,14 @@ namespace solar
         {
             child_nodes.append(item);
         }
+    }
+
+    int ParaTreeNode::getCurrentOptionId()
+    {
+        QString current_option = data(1).toString();
+        QList<QString> option_keys = option_childnodes.keys();
+        qDebug() <<current_option<<"\n"<<option_keys;
+        return option_keys.indexOf(current_option);
     }
 
 } // namespace solar

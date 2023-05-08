@@ -5,6 +5,7 @@ project(solar_2 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTORCC ON)                           #这一句如果不加的话，使用不了qrc下的相对路径
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--stack,999999")
 
 add_subdirectory("third_party/vectorclass2")
 
@@ -35,6 +36,8 @@ qt_add_executable(appsolar_2
     include/Scene.h src/Scene.cpp
 
 
+    include/Grid.h src/Grid.cpp
+
     include/SunShape.h  src/SunShape.cpp
     include/SunPosition.h   src/SunPosition.cpp
     include/Attenuation.h   src/Attenuation.cpp
@@ -44,8 +47,13 @@ qt_add_executable(appsolar_2
     include/Material.h  src/Material.cpp
     #include/MaterialRT.h    src/MaterialRT.cpp
 
-    include/Ray.h src/Ray.cpp
+    #include/Ray.h src/Ray.cpp
     include/SlopeError.h src/SlopeError.cpp
+
+    include/Armature.h src/Armature.cpp
+    include/Target.h src/Target.cpp
+    #include/HeatTubePlane.h src/HeatTubePlane.cpp
+    include/HeatTubePaneReceiver.h src/HeatTubePaneReceiver.cpp
 )
 
 qt_add_qml_module(appsolar_2

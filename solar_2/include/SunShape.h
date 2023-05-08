@@ -11,9 +11,9 @@ namespace solar
 {
     enum SunShapeType
     {
-        PILLBOX,
-        BUIE,
-        GAUSSIAN
+        kSunShapePillbox,
+        kSunShapeBuie,
+        kSunShapeGaussian
     };
 
     class SunShape
@@ -33,7 +33,7 @@ namespace solar
     {
     public:
         //GaussionSunShape() = default;
-        GaussianSunShape(double para=0.00251) : sigma(para) {}
+        GaussianSunShape(double sigma=0.00251) : sigma_(sigma), type_(kSunShapeGaussian) {}
 
         void setPara(double para) override;
         [[nodiscard]] PURE_FUNCTION auto getPara() const -> double override;
@@ -41,15 +41,15 @@ namespace solar
         void testPrint() const override;
 
     private:
-        SunShapeType type = GAUSSIAN;
-        double sigma{};
+        SunShapeType type_;
+        double sigma_{};
     };
 
     class PillboxSunShape : public SunShape
     {
     public:
         //PillboxSunShape() = default;
-        PillboxSunShape(double para = 0.00465) : theta_max(para) {}
+        PillboxSunShape(double theta_max = 0.00465) : theta_max_(theta_max), type_(kSunShapePillbox) {}
 
         void setPara(double para) override;
         [[nodiscard]] PURE_FUNCTION auto getPara() const -> double override;
@@ -57,15 +57,15 @@ namespace solar
         void testPrint() const override;
 
     private:
-        SunShapeType type = PILLBOX;
-        double theta_max{};
+        SunShapeType type_;
+        double theta_max_{};
     };
 
     class BuieSunShape : public SunShape
     {
     public:
         //BuieSunShape() = default;
-        BuieSunShape(double para = 0.02) : csr(para) {}
+        BuieSunShape(double csr = 0.02) : csr_(csr), type_(kSunShapeBuie) {}
 
         void setPara(double para) override;
         [[nodiscard]] PURE_FUNCTION auto getPara() const -> double override;
@@ -73,8 +73,8 @@ namespace solar
         void testPrint() const override;
 
     private:
-        SunShapeType type = BUIE;
-        double csr{};
+        SunShapeType type_ ;
+        double csr_{};
     };
 
 

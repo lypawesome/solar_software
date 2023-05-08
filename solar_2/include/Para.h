@@ -25,14 +25,22 @@ para中的每个类的params中，存的都是在UI中可以更改的属性
 #include <utility>
 #include <variant>
 #include <any>
+#include <vector>
 
 #include "SunShape.h"
 #include "SunPosition.h"
 #include "Attenuation.h"
 #include "Vec3.h"
 #include "Rotation.h"
+#include "Grid.h"
+#include "Geometry.h"
+#include "Profile.h"
+#include "Material.h"
+#include "Armature.h"
+#include "Target.h"
 
 namespace solar{
+
 
 
 
@@ -40,10 +48,10 @@ namespace solar{
     {
     public:
         virtual void setPara(
-            const std::string& name,
+            const int property_type,
             const QVariant&
                 value) = 0; // 纯虚函数,用来设置一个参数的值[不要加const，因为要对值进行修改]
-        [[nodiscard]] virtual auto getPara(const std::string& name) const
+        [[nodiscard]] virtual auto getPara(const int property_type) const
             -> QVariant = 0;
         virtual void testPrint() const = 0; // 纯虚函数，输出参数的内容进行测试
 
@@ -58,279 +66,259 @@ namespace solar{
     class Location : public Para
     {
     public:
-        Location(std::string _name = "", double _longitude = 0,
-                 double _latitude = 0)
-        {
-            this->params = {{"site_name", _name},           //地名----std::string
-                            {"longitude", _longitude},      //经度----double
-                            {"latitude", _latitude}};       //纬度----double
-        }
+        Location(std::string site_name = "unknown", double longitude = 0, double latitude = 0)
+            : site_name_(site_name), longitude_(longitude), latitude_(latitude) {}
 
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
+
+        void setPara(const int property_type, const QVariant& value) override;
+        [[nodiscard]] auto getPara(const int property_type) const
             -> QVariant override;
         void testPrint() const override;
 
     private:
-        std::unordered_map<std::string, std::any> params;
+        std::string site_name_;
+        double longitude_;
+        double latitude_;
     };
 
     /*
      * ================================Sun====================================
+     * 这里可以用工厂模式重构一下
     */
     class Sun : public Para
     {
     public:
         Sun()
         {
-            std::shared_ptr<SunShape> _sunshape = std::make_shared<GaussianSunShape>();
-            std::shared_ptr<SunPosition> _position = std::make_shared<SunPosition>();
-            this->params = {
-                {"sunshape", _sunshape},        //太阳形状---std::shared_ptr<SunShape>
-                {"position", _position}         //太阳的位置--std::shared_ptr<SunPosition>
-            };
+            sunshape_ = std::make_shared<PillboxSunShape>();       //先放高斯
+            sun_position_ = std::make_shared<SunPosition>();
         }
 
 
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
+        void setPara(const int property_type, const QVariant& value) override;
+        [[nodiscard]] auto getPara(const int property_type) const
             -> QVariant override;
         void testPrint() const override;
 
     private:
-        std::unordered_map<std::string, std::any> params;
+        std::shared_ptr<SunShape> sunshape_;
+        std::shared_ptr<SunPosition> sun_position_;
     };
 
-    /*
-    =======================================Air============================================
-    */
-    class Air : public Para
-    {
-    public:
-        virtual ~Air() = default;
-        Air()
-        {
-            std::shared_ptr<Attenuation> _attenuation =std::make_shared<VacuumAttenuation>();
-            this->params = {
-                {"attenuation", _attenuation}       //大气衰减模型---std::shared_ptr<Attenuation>
-            };
-        }
+//    /*
+//    =======================================Air============================================
+//    */
+//    class Air : public Para
+//    {
+//    public:
+//        virtual ~Air() = default;
+//        Air()
+//        {
+//            attenuation_ =std::make_shared<VacuumAttenuation>();
+//        }
 
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
-            -> QVariant override;
-        void testPrint() const override;
+//        void setPara(const int property_type, const QVariant& value) override;
+//        [[nodiscard]] auto getPara(const int property_type) const
+//            -> QVariant override;
+//        void testPrint() const override;
 
-    private:
-        std::unordered_map<std::string, std::any> params;
-    };
+//    private:
+//        std::shared_ptr<Attenuation> attenuation_;
+//    };
 
-    /*
-    ====================================Camera=================================================
-    相机可以设置的参数为：position、rotation、perspective，其他的要么是默认的，要么需要通过计算得出
-    ！！！camera类还需要补充完善
-    */
-    class Camera : public Para
-    {
-    public:
-        // Camera(){};
-        Camera(const Vec3& _position = Vec3(-2, -10, 2),
-               const Vec3& _rotation_axis = Vec3(0, 1, 0),
-               double _rotation_angle = 0, bool _perspective = false)
-        {
-            this->params = {{"look_at", Vec3(0, 0, 0)},         // 看向的点----Vec3
-                            {"up", Vec3(0, 1, 0)},              //相机向上的方向---Vec3
-                            {"position", _position},            //相机位置---Vec3
-                            {"rotation", Rotation(_rotation_axis, _rotation_angle)},    //旋转---Rotation
-                            {"perspective", _perspective}};     //是否透视---bool
-            this->look_at = {0, 0, 0};
-            this->up = {0, 1, 0};
+//    /*
+//    ====================================Camera=================================================
+//    相机可以设置的参数为：position、rotation、perspective，其他的要么是默认的，要么需要通过计算得出
+//    */
+//    class Camera : public Para
+//    {
+//    public:
+//        // Camera(){};
+//        Camera(const Vec3& position = Vec3(-2, -10, 2),
+//               const Vec3& rotation_axis = Vec3(0, 1, 0),
+//               double rotation_angle = 0, bool perspective = false)
+//            : position_(position),rotation_(Rotation(rotation_axis,rotation_angle)), perspective_(perspective)
+//        { }
 
-            calculateUVW();
-        }
+//        void setPara(const int property_type, const QVariant& value) override;
+//        [[nodiscard]] auto getPara(const int property_type) const
+//            -> QVariant override;
+//        void testPrint() const override;
 
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
-            -> QVariant override;
-        void testPrint() const override;
+//    private:
+//        //不进行计算的话，这几个参数没必要写
+////        Vec3 look_at_; // 相机看向的目标位置
+////        Vec3 up_;      // 相机向上的轴向
+////        Vec3 u_, v_, w_; // 相机上的标架，以position为坐标原点
 
-    private:
-        void calculateUVW(); // 计算得到uvw
+//        Vec3 position_;
+//        Rotation rotation_;
+//        bool perspective_;
+//    };
 
-    private:
-        Vec3 look_at; // 相机看向的目标位置
-        Vec3 up;      // 相机向上的轴向
-        Vec3 u, v, w; // 相机上的标架，以position为坐标原点
+//    /*
+//    ====================================Terrain====================================================
+//    Terrain类还需要补充完善
+//    */
+//    class Terrain : public Para
+//    {
+//    public:
+//        virtual ~Terrain() = default;
+//        Terrain()
+//        {
+//            grid_ = std::make_shared<Grid>();
+//        }
 
-        std::unordered_map<std::string, std::any> params;
-    };
+//        void setPara(const int property_type, const QVariant& value) override;
+//        [[nodiscard]] auto getPara(const int property_type) const
+//            -> QVariant override;
+//        void testPrint() const override;
 
-    /*
-    ====================================Terrain====================================================
-    Terrain类还需要补充完善
-    */
-    class Terrain : public Para
-    {
-    public:
-        virtual ~Terrain() = default;
-        // Terrain(){};
-        Terrain(bool _grid = true, bool _fill = true,
-                const Vec3& _steps = Vec3(1, 1, 1),
-                const Vec3& _division = Vec3(5, 5, 5),
-                const Vec3& _min = Vec3(-10, -10, 0),
-                const Vec3& _max = Vec3(10, 10, 0),
-                const std::string& _file = "")
-        {
-            this->params = {{"grid", _grid},
-                            {"fill", _fill},
-                            {"steps", _steps},
-                            {"division", _division},
-                            {"min", _min},
-                            {"max", _max},
-                            {"file", _file}};
-            //补充：从文件file中读取每个格子的高度
+//    private:
+//        void readFile();        //从file中导入heights
 
-        }
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
-            -> QVariant override;
-        void testPrint() const override;
+//    private:
+//        std::shared_ptr<Grid> grid_;
+//        std::vector<std::vector<double>> heights_; // 从file中导入的，每个格子的高度
+//    };
 
-    private:
-        void readFile();        //从file中导入heights
+//    /*
+//     ================================================Cloud===================================================
+//    这里的成员变量可能还要更改
+//        也用Grid来写
+//    */
+//    class Cloud : public Para
+//    {
+//    public:
+//        virtual ~Cloud() = default;
+//        // Cloud(){};
+//        Cloud()
+//        {
+//            grid_ = std::make_shared<Grid>();
+//        }
 
-    private:
-        QList<QList<double>> heights; // 从file中导入的，每个格子的高度
-        std::unordered_map<std::string, std::any> params;
-    };
+//        void setPara(const int property_type, const QVariant& value) override;
+//        [[nodiscard]] auto getPara(const int property_type) const
+//            -> QVariant override;
+//        void testPrint() const override;
 
-    /*
-     ================================================Cloud===================================================
-    这里的成员变量可能还要更改
-    */
-    class Cloud : public Para
-    {
-    public:
-        virtual ~Cloud() = default;
-        // Cloud(){};
-        Cloud(const Vec3& _coordinate = Vec3(10, 0, 0), double _length = 0,
-              double _width = 0, const std::string& _file = "")
-        {
-            this->params = {{"coordinate", _coordinate},        //云层中心坐标---Vec3
-                            {"length", _length},                //云层的长------double
-                            {"width", _width},                  //云层的宽------double
-                            {"file", _file}};                   //保存衰减因子k的文件名---std::string
-            //补充：：从文件中读取数据
-        }
+//    private:
+//        void readFile();
+//    private:
+//        std::shared_ptr<Grid> grid_;
+//        std::vector<std::vector<double>> k_; // 衰减因子k的数组，从文件中读取获得当光线经过云层时，DNI变为k*DNI
 
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
-            -> QVariant override;
-        void testPrint() const override;
+//    };
 
-    private:
+//    /*
+//     * ================================================Node================================================
+//        Node这里，放一个Transform，由位移、旋转、放缩组成
+//        kTranslation, kAxis, kAngle, kScale
+//    */
+//    class Node : public Para
+//    {
+//    public:
+//        virtual ~Node() = default;
+//        Node(const Vec3& translation=Vec3(0,0,0), const Vec3& rotation_axis=Vec3(0,0,1),
+//             double rotation_angle=0.0, const Vec3& scale=Vec3(1,1,1))
+//            : translation_(translation), rotation_(Rotation(rotation_axis,rotation_angle)),scale_(scale)
+//        { }
 
-        QList<QList<double>> k; // 衰减因子k的数组，从文件中读取获得当光线经过云层时，DNI变为k*DNI
+//        void setPara(const int property_type, const QVariant& value) override;
+//        [[nodiscard]] auto getPara(const int property_type) const
+//            -> QVariant override;
+//        void testPrint() const override;
 
-        std::unordered_map<std::string, std::any> params;
-    };
-
-    /*
-     * ================================================Node================================================
-        Node这里，放一个Transform，由位移、旋转、放缩组成
-    */
-    class Node : public Para
-    {
-    public:
-        virtual ~Node() = default;
-        Node(const Vec3& _translation=Vec3(0,0,0), const Vec3& _rotation_axis=Vec3(0,0,1),
-             double _rotation_angle=0.0, const Vec3& _scale=Vec3(1,1,1))
-        {
-            this->params = {    {"translation", _translation},          // 位移---Vec3
-                                {"rotation", Rotation(_rotation_axis,_rotation_angle)},     //旋转---Rotation
-                                {"scale", _scale}           //缩放---Vec3
-                                                    };
-        }
-
-        void setPara(const std::string& name, const QVariant& value) override;
-        [[nodiscard]] auto getPara(const std::string& name) const
-            -> QVariant override;
-        void testPrint() const override;
-
-    private:
-        //Vec3 translation;     //位移
-        //Vec3 rotation_axis;   //旋转轴
-        //double rotation_angle;    //旋转角度
-        //Vec3 scale;               //放缩
-        std::unordered_map<std::string, std::any > params;
-    };
+//    private:
+//        Vec3 translation_;     //位移
+//        Rotation rotation_;     //旋转
+//        Vec3 scale_;               //放缩
+//    };
 
 
-        /*
-         * ==============================================Shape===================================================
-         另外写类：shapeRT、profileRT、materialRT、material
-        */
-        class Shape : public Para
-        {
-            public:
-                virtual ~Shape() = default;
-                Shape()
-                {}
+//        /*
+//         * ==============================================Shape===================================================
+//         Material还没写好，先放着
+//        kGeometry, kA, kB, kC, kFile
+//        kProfile, kRectU, kRectV,kCircleRadius, kCirclePhi,kRegularEdgeLength, kRegularEdgeCnt,
+//                    kTriA, kTriB, kTriC, kPolyPoints,
+//        kMaterial
 
-                void setPara(const std::string& name, const QVariant& value) override;
-                [[nodiscard]] auto getPara(const std::string& name) const
-                    -> QVariant override;
-                void testPrint() const override;
+//        增加吸热管组成的面板
+//        */
+//    class Shape : public Para
+//    {
+//        public:
+//            virtual ~Shape() = default;
+//            Shape()
+//            {
+//                geometry_ = std::make_shared<Planar>();         //这里可以用工厂模式重构
+//                profile_ = std::make_shared<Rectangular>();
+//                material_ = std::make_shared<Reflect>();
+//            }
 
-            private:
-                //std::shared_ptr<ShapeRT> shapeRT;
-                //std::shared_ptr<ProfileRT> profileRT;
-                //std::shared_ptr<MaterialRT> materialRT;
-                //std::shared_ptr<Material> material;
+//            void setPara(const int property_type, const QVariant& value) override;
+//            [[nodiscard]] auto getPara(const int property_type) const
+//                -> QVariant override;
+//            void testPrint() const override;
 
-                std::unordered_map<QString, QVariant> params;
-        };
+//        private:
+//            std::shared_ptr<Geometry> geometry_;
+//            std::shared_ptr<Profile> profile_;
+//            std::shared_ptr<Material> material_;
+//            std::shared_ptr<HeatTubePaneReceiver> heat_tube_pane_;
 
-        /*
-         * ==============================================Tracker===================================================
-        跟踪器
-         */
-        class Tracker : public Para
-        {
-            public:
-                virtual ~Tracker() = default;
-                Tracker()
-                {}
 
-            private:
-                bool enabled;
-                std::shared_ptr<Armature> armature;
-                std::shared_ptr<Target> target;
+//    };
 
-                std::unordered_map<QString, QVariant> params;
-        };
+//        /*
+//         * ==============================================Tracker===================================================
+//        跟踪器
+//         */
 
-        /*
-         * ==============================================Array===================================================
-        array的部分，感觉有点鸡肋，看看tonatiuh是怎么用的
-         */
-        class Array : public Para
-        {
-            public:
-                virtual ~Array() = default;
-                Array(const std::string& _positions, int _nMax)
-                {
-                    this->params = {
-                                    {"positions", _positions},
-                                    {"nMax", _nMax}                  };
-                }
+//    class Tracker : public Para
+//    {
+//        public:
+//            virtual ~Tracker() = default;
+//            Tracker():enabled_(false)
+//            {
+//                armature_ = std::make_shared<OneAxis>();
+//                target_ = std::make_shared<Target>();
+//            }
 
-            private:
-                //std::string positions;    //按照[1,0,0 0,1,0]来输入点的位置
-                //int nMax;                 //最大个数
-                //QVariant与std::any类似
-                std::unordered_map<std::string, std::variant<std::string,int>> params;
-        };
+//            void setPara(const int property_type, const QVariant& value) override;
+//            [[nodiscard]] auto getPara(const int property_type) const
+//                                -> QVariant override;
+//            void testPrint() const override;
+
+//        private:
+//            bool enabled_;
+//            std::shared_ptr<Armature> armature_;
+//            std::shared_ptr<Target> target_;
+//    };
+
+//        /*
+//         * ==============================================Array===================================================
+//        array的部分，感觉有点鸡肋，可能需要删去
+//         */
+//        class Array : public Para
+//        {
+//            public:
+//                virtual ~Array() = default;
+//                Array(const std::string& positions, int nMax)
+//                    : positions_(positions), nMax_(nMax) {}
+
+
+//                void setPara(const int property_type, const QVariant& value) override;
+//                [[nodiscard]] auto getPara(const int property_type) const
+//                    -> QVariant override;
+//                void testPrint() const override;
+
+//            private:
+//                std::string positions_;    //按照[1,0,0 0,1,0]来输入点的位置
+//                int nMax_;                 //最大个数
+
+//        };
 
 } //namespace std
 

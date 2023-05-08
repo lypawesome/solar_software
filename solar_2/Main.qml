@@ -379,7 +379,7 @@ ApplicationWindow {
                                     color:rightUpperMenu_btn.hovered?"lightgray":"white"
                                 }
                                 onClicked: {
-                                    st.currentIndex = index
+                                    upper_st.currentIndex = index
                                 }
 
                             }
@@ -408,7 +408,7 @@ ApplicationWindow {
                     //---------------------------------------------
                     //StackLayout
                     StackLayout{
-                        id: st
+                        id: upper_st
                         anchors.top:spliter.bottom
                         anchors.bottom:parent.bottom
                         anchors.left:parent.left
@@ -439,6 +439,58 @@ ApplicationWindow {
                     SplitView.minimumHeight: 20
                     SplitView.fillHeight: true
                     color: "skyblue"
+
+
+
+                    StackLayout
+                    {
+                        id: lower_st
+                        anchors.fill: parent
+
+                        currentIndex: 0
+
+                        Repeater{
+                            model:2
+
+                            Rectangle{
+                                color: "pink"
+                                Text{               //先写个Text判断页面有没有换
+                                    id: temporary_text
+                                    anchors.top: parent.top
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    height: 20
+
+                                    text: "页面序号：" + index
+                                }
+
+                                //！！！！这个组件还有很多需要更改
+                                ParaTreeView{
+                                    anchors.top: temporary_text.bottom
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.bottom: parent.bottom
+
+                                    treeModel: paraControl.getTreeModel(index)
+                                    paraTreeId: index
+                                }
+                            }
+                        }
+
+                        //假设Topo总共有x个节点，world总共有6个，则总共需要x+6个ParaTreeView
+//                        Repeater{
+//                            id: repeater
+//                            //model: topoControl.getTotalNodeCnt() + 6    //这里也可以是对paraControl进行处理
+//                            model: 2    //先写2个
+
+//                            ParaTreeView
+//                            {
+//                                treeModel: paraControl.getTreeModel(repeater.index)
+//                            }
+//                        }
+
+
+                    }
 
                 }
             }

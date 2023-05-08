@@ -3,74 +3,116 @@
 #define MATERIAL_H
 
 /*
+ * =====还没想好怎么写，看一下Tonatiuh的源码，跟师姐交流一下
+ *
     一个基类，然后派生出几种类型：
-        1、diffuse
-        2、metal----高光反射
-        3、不加折射的
-        4、加折射的....
+
+
+派生类中，除了absorb之外均需要设置slopeerror
+【先不用SlopeError类，用枚举值+slope，具体如何使用要跟师姐交流一下】
 */
 
 #include "Vec3.h"
-#include "Ray.h"
-#include "Geometry.h"
-#include "SlopeError.h"
+//#include "SlopeError.h"
+
 #include <any>
 
 
 namespace solar{
 
+enum MaterialType
+{
+    kAbsorb,
+};
+enum SlopeErrorType{
+    kGaussionSlopeError,
+    kPillboxSlopeError
+};
+
 class Material{
 public:
-    //计算得到下一根光线
-    virtual bool getNextRay(Ray in_ray,IntersectInfo& intersection) const ;
-
+    virtual void setPara(const int property_type, const QVariant& value) = 0 ;
+    virtual auto getPara(const int property_type) const -> QVariant = 0 ;
+    virtual auto getType() const -> MaterialType =0;
+    virtual void testPrint() const = 0 ;
 };
 
-
-//玻璃层---有折射
-class Glass : public Material
+//Absorb：仅吸收
+class Absorb : public Material
 {
 public:
-    Glass();
-    bool getNextRay(Ray in_ray,IntersectInfo& intersection) const;
+    Absorb() : type_(kAbsorb){};
+
+    void setPara(const int property_type, const QVariant& value) override ;
+    auto getPara(const int property_type) const -> QVariant override ;
+    auto getType() const -> MaterialType override;
+    void testPrint() const override ;
 
 private:
-    //吸收率是设定好的，反射率通过Fresnel计算得到，透射率用1-吸收率-反射率得到
-    double reflectivity;    //反射率---可以通过Fresnel计算得到
-    double transmissivity;  //透射率---进入到玻璃内的概率
-    double absorptivity;    //吸收率----反射率+吸收率+透射率=1
-
-    double refractive_index;    //玻璃的折射率
-    double thickness;   //玻璃的厚度
-
-
-
+    MaterialType type_;
 };
 
-//银层--相当于metal
-class Sliver : public Material
+//Reflect：吸收+反射
+class Reflect : public Material
 {
 public:
-    Sliver();
-    bool getNextRay(Ray in_ray,IntersectInfo& intersection) const;
+    Reflect();
+
+    void setPara(const int property_type, const QVariant& value) override ;
+    auto getPara(const int property_type) const -> QVariant override ;
+    auto getType() const -> MaterialType override ;
+    void testPrint() const override  ;
 
 private:
-    double reflectivity;    //反射率
-    double absorptivity;    //吸收率
+    double reflectivity_;    //反射率  【默认吸收率=1-反射率】
+    SlopeErrorType slope_error_type_;     //法向扰动的类型_枚举值
+    double slope_;
 
-    SlopeError slope_error;     //法向扰动的类型
-    Vec3 color;     //颜色设置
+    MaterialType type_;
 };
 
-class Heliostat{
+//玻璃层---吸收、反射、折射
+//注意这里的反射是用fresnel计算得到的
+class Refract : public Material
+{
 public:
-    Heliostat();
-    bool getNextRay(Ray in_ray,IntersectInfo& intersection) const;
+    Refract();
+
+    void setPara(const int property_type, const QVariant& value) override ;
+    auto getPara(const int property_type) const -> QVariant override ;
+    auto getType() const -> MaterialType override ;
+    void testPrint() const override ;
 
 private:
-    Glass glass;
-    Sliver sliver;
+    //反射率通过Fresnel计算得到，
+    double reflectivity_;    //反射率---可以通过Fresnel计算得到----不可以自己更改
+    double transmissivity_;  //透射率---进入到玻璃内的概率,可以自己设置
+ // double absorptivity_;       //吸收率 = 1-反射率-透射率 ----- 不用自己设置
+
+    double air_refractive_index_;     //空气的折射率
+    double glass_refractive_index_;    //玻璃的折射率
+    double thickness_;   //玻璃层的厚度
+
+    SlopeErrorType slope_error_type_;
+    double slope_;
+
+    MaterialType type_;
 };
+
+
+//class Heliostat : public Material
+//{
+//public:
+//    Heliostat();
+
+//    void setPara(const int property_type, const QVariant& value) override ;
+//    auto getPara(const int property_type) const -> QVariant override;
+//    void testPrint() const override ;
+
+//private:
+//    Glass glass;
+//    Sliver sliver;
+//};
 
 //class Material
 //{

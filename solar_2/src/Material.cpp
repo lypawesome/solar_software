@@ -1,8 +1,9 @@
 
 #include "Material.h"
 
-Material::Material()
+namespace solar
 {
 
-}
+
+} // namespace solar
 

@@ -18,10 +18,9 @@ public:
 
 public:
     QSharedPointer<TopoTreeViewController> topo_tree_control;
-    QList<QSharedPointer<ParaTreeViewController>> world_para_tree_controllist;
+    QSharedPointer<ParaTreeViewController> para_tree_control;   //里面包含了若干个ParaTreeModel
+    //QList<QSharedPointer<ParaTreeViewController>> world_para_tree_controllist;
 
-    QSharedPointer<ParaTreeViewController> sun_para_tree_control;
-    QSharedPointer<ParaTreeViewController> location_para_tree_control;
 private:
     QSharedPointer<Location> location;
     QSharedPointer<Sun> sun;

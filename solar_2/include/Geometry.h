@@ -4,20 +4,22 @@
 
 #include <vector>
 
-#include "Profile.h"
+#include <QVariant>
+#include<QDebug>
+
 #include "Vec3.h"
-#include "Vec2.h"
-#include "Ray.h"
+#include <any>
+#include "Utils.h"
 
 namespace solar{
 
-    //记录相交的交点信息
-    struct IntersectInfo{
-        Vec3 in_point;     //入射光与物体的交点坐标
-        Vec3 out_point;     //入射点与出射点不一定是同一个
-        Vec3 normal;        //交点所在的Geometry的法向，求出射光线时要计算法向扰动
-        Ray in_ray;     //入射光线
-        Ray out_ray;    //出射光线
+    enum GeometryType{
+        kGeometryPlanar,
+        kGeometryParabolic,
+        kGeometryHyperbolic,
+        kGeometryElliptic,
+        kGeometryBSpline,
+        kGeometryMap
     };
 
     class Geometry
@@ -25,18 +27,12 @@ namespace solar{
     public:
         Geometry();
 
-        virtual Profile getProfile() const;
+        virtual void setPara(const int property_type, const QVariant& value);
+        virtual auto getPara(const int property_type) const -> QVariant ;
+        virtual GeometryType getType()=0;
 
-        //=================这些函数以后再加=====================
-//        virtual Vec3 getPoint(double u, double v) const;    //根据平面投影点得到Geometry上的点
-//        virtual Vec3 getNormal(double u, double v) const;
-//        virtual Vec3 getDerivativeU(double u,double v) const;
-//        virtual Vec3 getDerivativeV(double u, double v) const;
-//        //double findArea(double u0, double v0, double u1, double v1)const;
-
-//        virtual Vec2 getUV(const Vec3& p) const;        //根据Geometry上的点得到投影面上的点
-
-        virtual bool intersect(Ray in_ray, IntersectInfo& intersection)const = 0;           // 最重要的函数!!!求交
+//    protected:
+//        GeometryType type_;
 
     };
 
@@ -44,49 +40,65 @@ namespace solar{
     class Planar : public Geometry
     {
     public:
-        Planar(std::shared_ptr<Profile> _profile=nullptr):profile(_profile){};
+        Planar() : type_(kGeometryPlanar){};
 
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+        GeometryType getType()override { return type_;   }
+
     private:
-        std::shared_ptr<Profile> profile;
+        GeometryType type_;
     };
 
     //抛物面:z=x^2/a^2 + y^2/b^2
     class Parabolic : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+        Parabolic(double a=1, double b=1)
+            :a_(a), b_(b),type_(kGeometryParabolic) { }
+
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType()override { return type_;   }
 
     private:
-        double a;
-        double b;
-        std::shared_ptr<Profile> profile;
+        double a_;
+        double b_;
+        GeometryType type_;
     };
 
     //双曲面:z^2/c^2-x^2/a^2-y^2/b^2=1
     class Hyperbolic :public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+        Hyperbolic(double a=1, double b=1, double c=1 )
+            :a_(a), b_(b),c_(c),type_(kGeometryHyperbolic)  { }
+
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType()override { return type_;   }
 
     private:
-        double a;
-        double b;
-        double c;
-        std::shared_ptr<Profile> profile;
+        double a_;
+        double b_;
+        double c_;
+        GeometryType type_;
     };
 
     //椭球面面:x^2/a^2 + y^2/b^2 + z^2/c^2 = 1
     class Elliptic : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+        Elliptic(double a=1, double b=1, double c=1 )
+            :a_(a), b_(b),c_(c),type_(kGeometryElliptic)  { }
+
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType()override { return type_;   }
 
     private:
-        double a;
-        double b;
-        double c;
-        std::shared_ptr<Profile> profile;
+        double a_;
+        double b_;
+        double c_;
+        GeometryType type_;
     };
 
     /*
@@ -105,24 +117,87 @@ namespace solar{
     class BSpline : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+        BSpline() : file_(""),type_(kGeometryBSpline) { }
+
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType()override { return type_;   }
+        void readFile();    //读取文件
 
     private:
-        int cnt_u, cnt_v;    //两个方向的控制点个数分别为：cnt_u + 1,  cnt_v+1
-        int order_u, order_v;   //两个方向的阶数分别为：k、l
-        std::vector<std::vector<Vec3>> control_point;   //控制顶点
-        std::vector<double> knot_u, knot_v;     //两个方向的节点向量
+        std::string file_;   // 文件，从该文件中读入B样条曲面的各种信息
+        GeometryType type_;
 
-        std::shared_ptr<Profile> profile;
+        int cnt_u_, cnt_v_;       //两个方向的控制点个数分别为：cnt_u + 1,  cnt_v+1
+        int order_u_, order_v_;   //两个方向的阶数分别为：order_u、order_v
+        std::vector<std::vector<Vec3>> control_points_;   //控制顶点
+        std::vector<double> knot_u_, knot_v_;     //两个方向的节点向量
+
+
+    };
+
+    /*
+     * 自定义
+     * 读入mesh(.obj)文件，这个文件记录了定日镜上各个点的位置、法向信息
+    */
+    class Map : public Geometry
+    {
+    public:
+        Map() : file_(""), type_(kGeometryMap) { }
+
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType() override { return type_;   }
+        void readFile();    //读取文件
+
+    private:
+        std::string file_;
+        GeometryType type_;
+
+        std::vector<std::vector<Vec3>> points_;
+        std::vector<std::vector<Vec3>> normals_;
+    };
+
+    //柱面
+    class Cylinder : public Geometry
+    {
+    public:
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType() override { return type_;   }
+    private:
+        double height_;
+        double radius_;
+
+        GeometryType type_;
+    };
+
+    //圆锥面
+    class Cone : public Geometry
+    {
+    public:
+        void setPara(const int property_type, const QVariant& value) override;
+        auto getPara(const int property_type) const -> QVariant override ;
+        GeometryType getType() override { return type_;   }
+    private:
+        double height_;
+        double up_radius_;
+        double down_radius_;
+
+        GeometryType type_;
     };
 
 
+    /*
+     * ===================================================================
+     * 下面这些先放一放,
+     * 等前面的写好，再做下面的
+        */
 
-    //立方体---不设置profile
+    //立方体
     class Cube : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
 
     private:
         Vec3 size;  //三个维度上的长度
@@ -132,50 +207,29 @@ namespace solar{
     class Sphere : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+
     private:
         double radius;   //半径
-        std::shared_ptr<Profile> profile;
+
     };
 
-    //柱面
-    class Cylinder : public Geometry
-    {
-    public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
-    private:
-        double height;
-        double up_radius;
-        double down_radius;
-        std::shared_ptr<Profile> profile;
-    };
 
-    //圆锥面
-    class Cone : public Geometry
-    {
-    public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
-    private:
-        double height;
-        double radius;
-        std::shared_ptr<Profile> profile;
-    };
 
     class FunctionZ : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+
     private:
         std::string function;   // 显式方程
-        std::shared_ptr<Profile> profile;
+
     };
     class FunctionXYZ : public Geometry
     {
     public:
-        bool intersect(Ray in_ray, IntersectInfo& intersection)const;
+
     private:
         std::string function;   // 隐式方程
-        std::shared_ptr<Profile> profile;
+
     };
 
 }

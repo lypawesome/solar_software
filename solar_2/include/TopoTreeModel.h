@@ -37,7 +37,9 @@ public:
     QModelIndex parent(const QModelIndex &index) const;
 
 
+
     QString getType(const QModelIndex& index);          //获取该项对应的类型的图片名
+    int getTotalNodeCnt();      //返回总共的节点数--遍历一下树
 
 private:
     QSharedPointer<TopoTreeNode> root_node;

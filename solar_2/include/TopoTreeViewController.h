@@ -27,6 +27,7 @@ public slots://被qml调用
     Q_INVOKABLE void updateNode(const QModelIndex& index);  // !!!!!!!!!!!更新节点，可能要删去
     Q_INVOKABLE QString getImageName(const QModelIndex& index);         //找到该项对应的类型,返回该类型对应的图片名
     Q_INVOKABLE void appendChild(const QModelIndex& index,int type);    //在index下添加孩子节点，孩子节点的类型是type
+    Q_INVOKABLE int getTotalNodeCnt();         //返回总共的节点数
 
 private:
     QSharedPointer<TopoTreeModel> tree_model;     //这里要写成智能指针吗？？？
