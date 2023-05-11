@@ -1,0 +1,17 @@
+{
+    "classes": [
+        {
+            "className": "TopoTreeModel",
+            "object": true,
+            "qualifiedClassName": "solar::TopoTreeModel",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QAbstractItemModel"
+                }
+            ]
+        }
+    ],
+    "inputFile": "TopoTreeModel.h",
+    "outputRevision": 68
+}

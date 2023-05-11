@@ -27,8 +27,8 @@ namespace solar{
     public:
         Geometry();
 
-        virtual void setPara(const int property_type, const QVariant& value);
-        virtual auto getPara(const int property_type) const -> QVariant ;
+        virtual void setPara(const int property_type, const QVariant& value) = 0;
+        virtual auto getPara(const int property_type) const -> QVariant = 0;
         virtual GeometryType getType()=0;
 
 //    protected:

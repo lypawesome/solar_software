@@ -1,0 +1,81 @@
+{
+    "classes": [
+        {
+            "className": "TopoTreeViewController",
+            "object": true,
+            "qualifiedClassName": "solar::TopoTreeViewController",
+            "slots": [
+                {
+                    "access": "public",
+                    "name": "getTreeModel",
+                    "returnType": "QAbstractItemModel*"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "index",
+                            "type": "QModelIndex"
+                        },
+                        {
+                            "name": "new_name",
+                            "type": "QVariant"
+                        }
+                    ],
+                    "name": "updateNodeName",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "index",
+                            "type": "QModelIndex"
+                        }
+                    ],
+                    "name": "updateNode",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "index",
+                            "type": "QModelIndex"
+                        }
+                    ],
+                    "name": "getImageName",
+                    "returnType": "QString"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "index",
+                            "type": "QModelIndex"
+                        },
+                        {
+                            "name": "type",
+                            "type": "int"
+                        }
+                    ],
+                    "name": "appendChild",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "getTotalNodeCnt",
+                    "returnType": "int"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "TopoTreeViewController.h",
+    "outputRevision": 68
+}

@@ -15,7 +15,8 @@
         <file>image/settings_icon/cloud.png</file>
         <file>image/settings_icon/location.png</file>
         <file>image/settings_icon/node.png</file>
-        <file>image/settings_icon/shape.png</file>
+        <file>image/settings_icon/receiver.png</file>
+        <file>image/settings_icon/heliosat.png</file>
         <file>image/settings_icon/sun.png</file>
         <file>image/settings_icon/terrain.png</file>
         <file>image/settings_icon/tracker.png</file>

@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <cstdint>
 #define _USE_MATH_DEFINES
 
 #include "config.h"

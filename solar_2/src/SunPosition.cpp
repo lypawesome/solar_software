@@ -1,6 +1,6 @@
 
 #include "SunPosition.h"
-#include <format>
+//include <format>
 
 namespace solar
 {
@@ -55,8 +55,8 @@ auto SunPosition::getPara(const int property_type) const -> QVariant
 }
 void SunPosition::testPrint() const
 {
-    qDebug() << std::format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
-                                azimuth_, elevation_, irradiance_, trackable_);
+//    qDebug() << std::format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
+//                                azimuth_, elevation_, irradiance_, trackable_);
 }
 
 

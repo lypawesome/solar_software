@@ -1,0 +1,12 @@
+module solar_2
+typeinfo appsolar_2.qmltypes
+prefer :/solar_2/
+Main 1.0 Main.qml
+MyRect_World 1.0 MyRect_World.qml
+MyRect_Topology 1.0 MyRect_Topology.qml
+TopoTreeView 1.0 TopoTreeView.qml
+ParaTreeView 1.0 ParaTreeView.qml
+RayTracingWindow 1.0 RayTracingWindow.qml
+AnalyticFunctionWindow 1.0 AnalyticFunctionWindow.qml
+DataVisualizationWindow 1.0 DataVisualizationWindow.qml
+

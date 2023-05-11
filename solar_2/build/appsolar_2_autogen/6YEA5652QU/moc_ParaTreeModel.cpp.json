@@ -1,0 +1,17 @@
+{
+    "classes": [
+        {
+            "className": "ParaTreeModel",
+            "object": true,
+            "qualifiedClassName": "solar::ParaTreeModel",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QAbstractItemModel"
+                }
+            ]
+        }
+    ],
+    "inputFile": "ParaTreeModel.h",
+    "outputRevision": 68
+}

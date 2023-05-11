@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/solar_2">
+    <file alias="qmldir">/home/liu/qml_projects/solar_2/build/solar_2/qmldir</file>
+  </qresource>
+</RCC>
+

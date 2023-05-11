@@ -1,6 +1,6 @@
 
 #include "Rotation.h"
-#include <format>
+//#include <format>
 namespace solar
 {
 
@@ -55,8 +55,8 @@ auto Rotation::getPara(const int property_type) const -> QVariant
 }
 void Rotation::testPrint() const
 {
-    qDebug() <<std::format("\t Rotation::axis=({},{},{}), angle={}",
-                            axis_.x(),axis_.y(), axis_.z(),angle_);
+//    qDebug() <<std::format("\t Rotation::axis=({},{},{}), angle={}",
+//                            axis_.x(),axis_.y(), axis_.z(),angle_);
 }
 
 }   // namespace solar

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#include <format>
+//#include <format>
 
 namespace solar
 {
@@ -11,7 +11,7 @@ namespace solar
     auto GaussianSunShape::getType() const -> SunShapeType{return type_;}
     void GaussianSunShape::testPrint() const
     {
-        qDebug() << std::format("\t Gaussion SunShape::sigma={}", sigma_);
+        //qDebug() << std::format("\t Gaussion SunShape::sigma={}", sigma_);
     }
 
     void PillboxSunShape::setPara(double para) { theta_max_ = para; }
@@ -19,7 +19,7 @@ namespace solar
     auto PillboxSunShape::getType() const -> SunShapeType{return type_;}
     void PillboxSunShape::testPrint() const
     {
-        qDebug() << std::format("\t Pillbox SunShape::theta_Max={}", theta_max_);
+        //qDebug() << std::format("\t Pillbox SunShape::theta_Max={}", theta_max_);
     }
 
     void BuieSunShape::setPara(double para) { csr_ = para; }
@@ -27,7 +27,7 @@ namespace solar
     auto BuieSunShape::getType() const -> SunShapeType{return type_;}
     void BuieSunShape::testPrint() const
     {
-        qDebug() << std::format("\t Buie SunShape::csr={}", csr_);
+        //qDebug() << std::format("\t Buie SunShape::csr={}", csr_);
     }
 } // namespace solar
 

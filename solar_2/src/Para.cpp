@@ -1,7 +1,7 @@
 
 #include "Para.h"
 
-#include <format>
+//#include <format>
 #include <iostream>
 #include <stdexcept>
 
@@ -71,9 +71,9 @@ namespace solar
 
     void Location::testPrint() const
     {
-        qDebug() << std::format("Location: site_name={}, "
-                            "longitude={},  latitude={}",
-                            site_name_, longitude_, latitude_);
+//        qDebug() << std::format("Location: site_name={}, "
+//                            "longitude={},  latitude={}",
+//                            site_name_, longitude_, latitude_);
     }
 
     /*

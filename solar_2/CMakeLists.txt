@@ -1,14 +1,20 @@
+
+
 cmake_minimum_required(VERSION 3.16)
 
 project(solar_2 VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTORCC ON)                           #这一句如果不加的话，使用不了qrc下的相对路径
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--stack,999999")
 
 add_subdirectory("third_party/vectorclass2")
 
+#set(CMAKE_MODULE_PATH /home/liu/Qt/6.4.3)
+list(APPEND CMAKE_PREFIX_PATH /home/liu/Qt/6.4.3/gcc_64/lib/cmake)
+#手动把qt6.4.3的目录添加进去
+message("cmake_module_path: " ${CMAKE_MODULE_PATH})
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup()
@@ -64,6 +70,9 @@ qt_add_qml_module(appsolar_2
     QML_FILES MyRect_Topology.qml
     QML_FILES TopoTreeView.qml
     QML_FILES ParaTreeView.qml
+    QML_FILES RayTracingWindow.qml
+    QML_FILES AnalyticFunctionWindow.qml
+    QML_FILES DataVisualizationWindow.qml
 )
 
 set_target_properties(appsolar_2 PROPERTIES
@@ -80,6 +89,7 @@ target_include_directories(appsolar_2 PRIVATE "include")
 target_link_libraries(appsolar_2
     PRIVATE Qt6::Quick
 )
+
 
 install(TARGETS appsolar_2
     BUNDLE DESTINATION .
