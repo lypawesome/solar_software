@@ -17,50 +17,73 @@ list(APPEND CMAKE_PREFIX_PATH /home/liu/Qt/6.4.3/gcc_64/lib/cmake)
 message("cmake_module_path: " ${CMAKE_MODULE_PATH})
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 
+# add_subdirectory(source)
+
 qt_standard_project_setup()
 
+# file(GLOB_RECURSE native_srcs source/*.cpp source/*.h)
+file(GLOB_RECURSE native_srcs source/*.cpp source/*.h )
 qt_add_executable(appsolar_2
 
     qml.qrc
 
     src/main.cpp
 
-    include/Vec3.h src/Vec3.cpp
-    include/Vec2.h src/Vec2.cpp
+    ${native_srcs}
 
-    include/Utils.h
+    # source/utils/Vec3.h 
+    # source/utils/Vec3.cpp
+    # source/utils/Vec2.h 
+    # source/utils/Vec2.cpp
+    # source/utils/Utils.h
 
-    include/Para.h src/Para.cpp
-    include/TopoTreeNode.h src/TopoTreeNode.cpp
-    include/TopoTreeModel.h src/TopoTreeModel.cpp
-    include/TopoTreeViewController.h src/TopoTreeViewController.cpp
+    # include/Para.h src/Para.cpp
+    # include/TopoTreeNode.h src/TopoTreeNode.cpp
+    # include/TopoTreeModel.h src/TopoTreeModel.cpp
+    # include/TopoTreeViewController.h src/TopoTreeViewController.cpp
 
-    include/ParaTreeNode.h src/ParaTreeNode.cpp
-    include/ParaTreeModel.h src/ParaTreeModel.cpp
-    include/ParaTreeViewController.h src/ParaTreeViewController.cpp
+    # include/ParaTreeNode.h src/ParaTreeNode.cpp
+    # include/ParaTreeModel.h src/ParaTreeModel.cpp
+    # include/ParaTreeViewController.h src/ParaTreeViewController.cpp
 
-    include/Scene.h src/Scene.cpp
+    # include/Scene.h src/Scene.cpp
 
 
-    include/Grid.h src/Grid.cpp
+    # include/Grid.h src/Grid.cpp
 
-    include/SunShape.h  src/SunShape.cpp
-    include/SunPosition.h   src/SunPosition.cpp
-    include/Attenuation.h   src/Attenuation.cpp
-    include/Rotation.h  src/Rotation.cpp
-    include/Geometry.h   src/Geometry.cpp
-    include/Profile.h src/Profile.cpp
-    include/Material.h  src/Material.cpp
-    #include/MaterialRT.h    src/MaterialRT.cpp
+    # include/SunShape.h  src/SunShape.cpp
+    # include/SunPosition.h   src/SunPosition.cpp
+    # include/Attenuation.h   src/Attenuation.cpp
+    # include/Rotation.h  src/Rotation.cpp
+    # include/Geometry.h   src/Geometry.cpp
+    # include/Profile.h src/Profile.cpp
+    # include/Material.h  src/Material.cpp
+    # #include/MaterialRT.h    src/MaterialRT.cpp
 
-    #include/Ray.h src/Ray.cpp
-    include/SlopeError.h src/SlopeError.cpp
+    # #include/Ray.h src/Ray.cpp
+    # include/SlopeError.h src/SlopeError.cpp
+    
+    # source/topology/tracker/Armature.h 
+    # source/topology/tracker/Armature.cpp
+    # source/topology/tracker/OneAxisArmature.h 
+    # source/topology/tracker/OneAxisArmature.cpp
+    # source/topology/tracker/TwoAxisArmature.h 
+    # source/topology/tracker/TwoAxisArmature.cpp
+    # source/topology/tracker/TwoAxisWithDrivesArmature.h 
+    # source/topology/tracker/TwoAxisWithDrivesArmature.cpp
 
-    include/Armature.h src/Armature.cpp
-    include/Target.h src/Target.cpp
-    #include/HeatTubePlane.h src/HeatTubePlane.cpp
-    include/HeatTubePaneReceiver.h src/HeatTubePaneReceiver.cpp
+
+
+
+    # include/Target.h src/Target.cpp
+    # #include/HeatTubePlane.h src/HeatTubePlane.cpp
+    # include/HeatTubePaneReceiver.h src/HeatTubePaneReceiver.cpp
+
+    # include/Tracker.h  src/Tracker.cpp
 )
+
+
+
 
 qt_add_qml_module(appsolar_2
     URI solar_2
@@ -83,8 +106,22 @@ set_target_properties(appsolar_2 PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+# file(GLOB_RECURSE native_includes source/topology/*.h)
+# add_library(DIR_INCLUDE SHARED ${native_includes})
+# target_link_libraries(
+#     appsolar_2 PRIVATE DIR_INCLUDE
+# )
+
+# file(GLOB_RECURSE native_srcs source/*.cpp source/*.h)
+# add_library(DIR_SRC_ SHARED ${native_srcs})
+# target_link_libraries(
+#     appsolar_2 PRIVATE DIR_SRC
+# )
+
+
 target_link_libraries(appsolar_2 PRIVATE VectorClass2)
 target_include_directories(appsolar_2 PRIVATE "include")
+target_include_directories(appsolar_2 PRIVATE "source")
 
 target_link_libraries(appsolar_2
     PRIVATE Qt6::Quick

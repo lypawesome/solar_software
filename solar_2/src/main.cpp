@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "Scene.h"
+#include "scene/Scene.h"
 
 int main(int argc, char *argv[])
 {
