@@ -22,8 +22,8 @@ auto Rotation::getPara(const std::string& property_type) -> QVariant
 }
 void Rotation::testPrint() const
 {
-   qDebug() << ::solar::format("\t Rotation::axis=({},{},{}), angle={}",
-                           axis_.x(),axis_.y(), axis_.z(),angle_);
+   qDebug() << QString(::solar::format("\t Rotation::axis=({},{},{}), angle={}",
+                           axis_.x(),axis_.y(), axis_.z(),angle_).c_str());
 }
 
 }   // namespace solar

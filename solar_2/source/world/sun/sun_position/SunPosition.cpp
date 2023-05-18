@@ -16,8 +16,8 @@ auto solar::SunPosition::getPara(const std::string& property_type) -> QVariant
 
 void solar::SunPosition::testPrint() const
 {
-   qDebug() << ::solar::format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
-                               azimuth_, elevation_, irradiance_, trackable_);
+   qDebug() << QString(::solar::format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
+                               azimuth_, elevation_, irradiance_, trackable_).c_str());
 }
 
 // namespace solar

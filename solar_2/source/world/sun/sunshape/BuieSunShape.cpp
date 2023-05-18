@@ -10,6 +10,6 @@ namespace solar
     auto BuieSunShape::getType() const -> SunShapeType { return type_; }
     void BuieSunShape::testPrint() const
     {
-        qDebug() << ::solar::format("\t Buie SunShape::csr={}", csr_);
+        qDebug() << QString(::solar::format("\t Buie SunShape::csr={}", csr_).c_str());
     }
 } // namespace solar

@@ -20,11 +20,11 @@ namespace solar
 
     void Grid::testPrint() const
     {
-        qDebug() << ::solar::format("\tGrid::grid={},fill={},steps=({},{},{}),divisions=({},{},{}),file={}",
+        qDebug() << QString(::solar::format("\tGrid::grid={},fill={},steps=({},{},{}),divisions=({},{},{}),file={}",
                            "\n \t\t min=({},{},{}),max=({},{},{}),file={}", grid_, fill_,
                            steps_.x(), steps_.y(), steps_.z(), divisions_.x(), divisions_.y(),
                            divisions_.z(), min_.x(), min_.y(), min_.z(), max_.x(), max_.y(),
-                           max_.z(), file_);
+                           max_.z(), file_).c_str());
     }
 
 } // namespace solar

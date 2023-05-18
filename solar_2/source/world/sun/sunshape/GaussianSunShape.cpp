@@ -10,6 +10,6 @@ namespace solar
     auto GaussianSunShape::getType() const -> SunShapeType { return type_; }
     void GaussianSunShape::testPrint() const
     {
-        qDebug() << ::solar::format("\t Gaussion SunShape::sigma={}", sigma_);
+        qDebug() << QString(::solar::format("\t Gaussion SunShape::sigma={}", sigma_).c_str());
     }
 } // namespace solar

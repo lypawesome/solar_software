@@ -3,6 +3,7 @@
 #include <utils/Format.h>
 
 #include <QDebug>
+#include <QString>
 
 using namespace solar;
 
@@ -18,7 +19,7 @@ auto solar::Location::getPara(const std::string& property_type) -> QVariant
 
 void solar::Location::testPrint() const
 {
-    qDebug() << ::solar::format("Location: site_name={}, "
+    qDebug() << QString(::solar::format("Location: site_name={}, "
                        "longitude={},  latitude={}",
-                       site_name_, longitude_, latitude_);
+                       site_name_, longitude_, latitude_).c_str());
 }

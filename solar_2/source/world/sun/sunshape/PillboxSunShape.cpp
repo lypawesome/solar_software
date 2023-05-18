@@ -10,6 +10,6 @@ namespace solar
     auto PillboxSunShape::getType() const -> SunShapeType { return type_; }
     void PillboxSunShape::testPrint() const
     {
-        qDebug() << ::solar::format("\t Pillbox SunShape::theta_Max={}", theta_max_);
+        qDebug() << QString(::solar::format("\t Pillbox SunShape::theta_Max={}", theta_max_).c_str());
     }
 } // namespace solar

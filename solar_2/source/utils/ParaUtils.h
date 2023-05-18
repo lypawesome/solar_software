@@ -1,16 +1,18 @@
 #pragma once
 
+#include <QString>
 #include <QVariant>
+
 
 #include <string>
 #include <string_view>
 #include <type_traits>
+#include <version>
 
 #include <boost/describe.hpp>
 
 #include <utils/Format.h>
 #include <utils/config.h>
-
 
 namespace solar
 {
@@ -39,10 +41,11 @@ namespace solar
             });
         if (!found) [[unlikely]]
         {
-            qDebug() << ::solar::format("ERROR: {}::setPara(): No such property: {}", NamedClass::name(),
-                               property_type);
+            qDebug() << QString(::solar::format("ERROR: {}::setPara(): No such property: {}",
+                                                NamedClass::name(), property_type)
+                                    .c_str());
             throw ::solar::format("ERROR: {}::setPara(): No such property: {}", NamedClass::name(),
-                         property_type);
+                                  property_type);
         }
     }
 
@@ -65,16 +68,25 @@ namespace solar
             });
         if (!found) [[unlikely]]
         {
-            qDebug() << ::solar::format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
-                               property_type);
+            qDebug() << QString(::solar::format("ERROR: {}::getPara(): No such property: {}",
+                                                NamedClass::name(), property_type)
+                                    .c_str());
             throw ::solar::format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
-                         property_type);
+                                  property_type);
         }
         return ret;
     }
 
+#ifdef _GLIBCXX_VERSION_INCLUDED
+    PURE_FUNCTION inline auto toMemberName(const std::string& original_name) -> std::string
+    {
+        return original_name + "_";
+    }
+#else
     PURE_FUNCTION constexpr auto toMemberName(const std::string& original_name) -> std::string
     {
         return original_name + "_";
     }
+#endif
+
 } // namespace solar
