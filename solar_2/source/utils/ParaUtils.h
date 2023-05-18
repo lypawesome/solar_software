@@ -39,9 +39,9 @@ namespace solar
             });
         if (!found) [[unlikely]]
         {
-            qDebug() << format("ERROR: {}::setPara(): No such property: {}", NamedClass::name(),
+            qDebug() << ::solar::format("ERROR: {}::setPara(): No such property: {}", NamedClass::name(),
                                property_type);
-            throw format("ERROR: {}::setPara(): No such property: {}", NamedClass::name(),
+            throw ::solar::format("ERROR: {}::setPara(): No such property: {}", NamedClass::name(),
                          property_type);
         }
     }
@@ -65,9 +65,9 @@ namespace solar
             });
         if (!found) [[unlikely]]
         {
-            qDebug() << format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
+            qDebug() << ::solar::format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
                                property_type);
-            throw format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
+            throw ::solar::format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
                          property_type);
         }
         return ret;

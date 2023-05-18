@@ -1,5 +1,8 @@
 #include "scene/Location.h"
 #include <utils/ParaUtils.h>
+#include <utils/Format.h>
+
+#include <QDebug>
 
 using namespace solar;
 
@@ -15,7 +18,7 @@ auto solar::Location::getPara(const std::string& property_type) -> QVariant
 
 void solar::Location::testPrint() const
 {
-    qDebug() << format("Location: site_name={}, "
+    qDebug() << ::solar::format("Location: site_name={}, "
                        "longitude={},  latitude={}",
                        site_name_, longitude_, latitude_);
 }

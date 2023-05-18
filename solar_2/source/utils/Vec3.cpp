@@ -4,7 +4,7 @@
 #include "utils/Utils.h"
 
 #include <cmath>
-//#include <format>
+#include <utils/Format.h>
 
 namespace solar
 {
@@ -109,10 +109,10 @@ void Vec3::make_unit_vector()
 [[nodiscard]] PURE_FUNCTION auto Vec3::to_string() const -> std::string
 {
     auto internal_data = data();
-    //return std::format("({}, {}, {})", internal_data[0], internal_data[1], internal_data[2]);
-    return "(" + std::to_string(internal_data[0]) + ", "
-           +std::to_string(internal_data[1]) + ", "
-           +std::to_string(internal_data[2]) + ")"  ;
+    return ::solar::format("({}, {}, {})", internal_data[0], internal_data[1], internal_data[2]);
+    // return "(" + std::to_string(internal_data[0]) + ", "
+    //        +std::to_string(internal_data[1]) + ", "
+    //        +std::to_string(internal_data[2]) + ")"  ;
 }
 
 [[nodiscard]] PURE_FUNCTION auto operator+(const Vec3& vec1,

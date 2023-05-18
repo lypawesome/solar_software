@@ -15,7 +15,7 @@ auto solar::Node::getPara(const std::string& property_type) -> QVariant
 
 void solar::Node::testPrint() const
 {
-    qDebug() << std::format("Node::translation=({},{},{}),scale=({},{},{})", translation_.x(),
+    qDebug() << ::solar::format("Node::translation=({},{},{}),scale=({},{},{})", translation_.x(),
                             translation_.y(), translation_.z(), scale_.x(), scale_.y(), scale_.z());
     rotation_.testPrint();
 }
