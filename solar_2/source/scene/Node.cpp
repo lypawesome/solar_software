@@ -1,8 +1,27 @@
 #include "scene/Node.h"
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+void solar::Node::setPara(const std::string& property_type, const QVariant& value)
 {
-    
+    ::solar::setPara(property_type, value, this);
+}
+
+auto solar::Node::getPara(const std::string& property_type) -> QVariant
+{
+    return ::solar::getPara(property_type, this);
+}
+
+void solar::Node::testPrint() const
+{
+    qDebug() << std::format("Node::translation=({},{},{}),scale=({},{},{})", translation_.x(),
+                            translation_.y(), translation_.z(), scale_.x(), scale_.y(), scale_.z());
+    rotation_.testPrint();
+}
+
+// namespace solar
+// {
 
 //    /*
 //     * =====================================Node======================================
@@ -77,4 +96,4 @@ namespace solar
 //        rotation_.testPrint();
 //    }
 
-}
+// }

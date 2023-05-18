@@ -1,72 +1,21 @@
 #include "scene/Location.h"
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+void solar::Location::setPara(const std::string& property_type, const QVariant& value)
 {
-    /*
-    ==================================Location====================================
-    kSiteName,
-    kLongitude,
-    kLatitude,
-    */
-    void Location::setPara(const int property_type, const QVariant& value)
-    {
-        switch(property_type)
-        {
-        case kSiteName:
-        {
-            site_name_ = value.toString().toStdString();
-            break;
-        }
-        case kLongitude:
-        {
-            longitude_ = value.toDouble();
-            break;
-        }
-        case kLatitude:
-        {
-            latitude_ = value.toDouble();
-            break;
-        }
-        default:
-        {
-            throw "ERROR::Location::setPara()::NO SUCH PARA_PROPERTY:" + std::to_string(property_type);
-        }
-        }
-    }
-    auto Location::getPara(const int property_type) const -> QVariant
-    {
-        QVariant ret ;
-        switch (property_type)
-        {
-        case kSiteName:
-        {
-            ret = QString::fromStdString(site_name_);
-            break;
-        }
-        case kLongitude:
-        {
-            ret = longitude_;
-            break;
-        }
-        case kLatitude:
-        {
-            ret = latitude_;
-            break;
-        }
-        default:
-        {
-            throw "ERROR::Location::getPara()::NO SUCH PARA_PROPERTY:" + std::to_string(property_type);
-            break;
-        }
-        }
+    ::solar::setPara(property_type, value, this);
+}
 
-        return ret;
-    }
+auto solar::Location::getPara(const std::string& property_type) -> QVariant
+{
+    return ::solar::getPara(property_type, this);
+}
 
-    void Location::testPrint() const
-    {
-//        qDebug() << std::format("Location: site_name={}, "
-//                            "longitude={},  latitude={}",
-//                            site_name_, longitude_, latitude_);
-    }
+void solar::Location::testPrint() const
+{
+    qDebug() << format("Location: site_name={}, "
+                       "longitude={},  latitude={}",
+                       site_name_, longitude_, latitude_);
 }

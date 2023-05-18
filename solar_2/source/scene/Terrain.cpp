@@ -1,8 +1,30 @@
 #include "scene/Terrain.h"
+#include <utils/Grid.h>
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+solar::Terrain::Terrain() { grid_ = std::make_shared<Grid>(); }
+
+void solar::Terrain::setPara(const std::string& property_type, const QVariant& value)
 {
-    
+    ::solar::setPara(property_type, value, this);
+}
+
+auto solar::Terrain::getPara(const std::string& property_type) -> QVariant
+{
+    return ::solar::getPara(property_type, this);
+}
+
+void solar::Terrain::testPrint() const
+{
+    qDebug() << "Terrain::";
+    grid_->testPrint();
+}
+
+// namespace solar
+// {
+
 //    /*
 //     * ===========================================Terrain==============================================
 //     *      kGrid,
@@ -69,4 +91,4 @@ namespace solar
 //        grid_->testPrint();
 //    }
 
-}
+// }

@@ -1,64 +1,14 @@
 #include "topology/geometry/Hyperbolic.h"
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+void solar::Hyperbolic::setPara(const std::string& property_type, const QVariant& value)
 {
-    /*
- * ===========================Hyperbolic==========================
-*/
-void Hyperbolic::setPara(const int property_type, const QVariant& value)
-{
-    switch(property_type)
-    {
-    case kA:
-    {
-        a_ = value.toDouble();
-        break;
-    }
-    case kB:
-    {
-        b_ = value.toDouble();
-        break;
-    }
-    case kC:
-    {
-        c_ = value.toDouble();
-        break;
-    }
-    default:
-    {
-        throw "ERROR::Hyperbolic::setPara()::no such property_type: "
-            + std::to_string(property_type);
-        break;
-    }
-    }
+    ::solar::setPara(property_type, value, this);
 }
-auto Hyperbolic::getPara(const int property_type) const -> QVariant
+
+auto solar::Hyperbolic::getPara(const std::string& property_type) -> QVariant
 {
-    QVariant ret;
-    switch(property_type)
-    {
-    case kA:
-    {
-        ret = a_;
-        break;
-    }
-    case kB:
-    {
-        ret = b_;
-        break;
-    }
-    case kC:
-    {
-        ret = c_;
-        break;
-    }
-    default:
-    {
-        throw "ERROR::Hyperbolic::getPara()::no such property_type: "
-            + std::to_string(property_type);
-        break;
-    }
-    }
-    return ret;
-}
+    return ::solar::getPara(property_type, this);
 }

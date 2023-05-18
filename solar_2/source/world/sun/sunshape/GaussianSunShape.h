@@ -6,7 +6,7 @@ namespace solar
     {
     public:
         //GaussionSunShape() = default;
-        GaussianSunShape(double sigma=0.00251) : sigma_(sigma), type_(kSunShapeGaussian) {}
+        explicit GaussianSunShape(double sigma=0.00251) : sigma_(sigma) {}
 
         void setPara(double para) override;
         [[nodiscard]] PURE_FUNCTION auto getPara() const -> double override;
@@ -14,7 +14,7 @@ namespace solar
         void testPrint() const override;
 
     private:
-        SunShapeType type_;
+        SunShapeType type_ = kSunShapeGaussian;
         double sigma_{};
     };
 }

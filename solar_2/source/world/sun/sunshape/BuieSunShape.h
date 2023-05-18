@@ -6,7 +6,7 @@ namespace solar
     {
     public:
         //BuieSunShape() = default;
-        BuieSunShape(double csr = 0.02) : csr_(csr), type_(kSunShapeBuie) {}
+        explicit BuieSunShape(double csr = 0.02) : csr_(csr) {}
 
         void setPara(double para) override;
         [[nodiscard]] PURE_FUNCTION auto getPara() const -> double override;
@@ -14,7 +14,7 @@ namespace solar
         void testPrint() const override;
 
     private:
-        SunShapeType type_ ;
+        SunShapeType type_ = kSunShapeBuie;
         double csr_{};
     };
 }

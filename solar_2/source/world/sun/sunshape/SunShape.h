@@ -2,9 +2,6 @@
 #ifndef SUNSHAPE_H
 #define SUNSHAPE_H
 
-
-
-
 #include "utils/config.h"
 
 namespace solar
@@ -18,23 +15,18 @@ namespace solar
 
     class SunShape
     {
-    public:
-        virtual ~SunShape() = default;
+        public:
+            virtual ~SunShape() = default;
 
-        virtual void testPrint() const = 0;
-        virtual void setPara(double para) = 0;
-        [[nodiscard]] virtual auto getPara() const -> double = 0;
-        [[nodiscard]] virtual auto getType() const -> SunShapeType =0;
-    protected:
-        SunShape() = default;
+            virtual void testPrint() const = 0;
+            virtual void setPara(double para) = 0;
+            [[nodiscard]] virtual auto getPara() const -> double = 0;
+            [[nodiscard]] virtual auto getType() const -> SunShapeType = 0;
+
+        protected:
+            SunShape() = default;
     };
 
-    
-
-    
-    
-
-
-} //namespace solar
+} // namespace solar
 
 #endif // SUNSHAPE_H

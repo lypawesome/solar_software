@@ -1,14 +1,16 @@
 
 #include "topology/heat_tube/HeatTubePaneReceiver.h"
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+void solar::HeatTubePaneReceiver::setPara(const std::string& property_type, const QVariant& value)
 {
-
-
-HeatTubePaneReceiver::HeatTubePaneReceiver()
-{
-
+    ::solar::setPara(property_type, value, this);
 }
 
-}  // namespace solar
+auto solar::HeatTubePaneReceiver::getPara(const std::string& property_type) -> QVariant
+{
+    return ::solar::getPara(property_type, this);
+}
 

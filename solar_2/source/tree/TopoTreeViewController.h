@@ -7,32 +7,37 @@
 ！！！注意这里的成员函数还需要改
 */
 
-
-#include <QObject>
 #include "TopoTreeModel.h"
+#include <QObject>
 
-namespace solar{
-
-class TopoTreeViewController : public QObject
+namespace solar
 {
-    Q_OBJECT
 
-public:
-    TopoTreeViewController(QObject *parent = nullptr);
-    ~TopoTreeViewController();
+    class TopoTreeViewController : public QObject
+    {
+            Q_OBJECT
 
-public slots://被qml调用
-    Q_INVOKABLE QAbstractItemModel *getTreeModel();
-    Q_INVOKABLE void updateNodeName(const QModelIndex& index, QVariant new_name);      //更新节点名字
-    Q_INVOKABLE void updateNode(const QModelIndex& index);  // !!!!!!!!!!!更新节点，可能要删去
-    Q_INVOKABLE QString getImageName(const QModelIndex& index);         //找到该项对应的类型,返回该类型对应的图片名
-    Q_INVOKABLE void appendChild(const QModelIndex& index,int type);    //在index下添加孩子节点，孩子节点的类型是type
-    Q_INVOKABLE int getTotalNodeCnt();         //返回总共的节点数
+        public:
+            TopoTreeViewController(QObject* parent = nullptr);
+            ~TopoTreeViewController();
 
-private:
-    QSharedPointer<TopoTreeModel> tree_model;     //这里要写成智能指针吗？？？
-};
+        public slots: // 被qml调用
+            Q_INVOKABLE auto getTreeModel() -> QAbstractItemModel*;
+            // 更新节点名字
+            Q_INVOKABLE void updateNodeName(const QModelIndex& index, const QVariant& new_name);
+            // !!!!!!!!!!!更新节点，可能要删去
+            Q_INVOKABLE void updateNode(const QModelIndex& index);
+            // 找到该项对应的类型,返回该类型对应的图片名
+            Q_INVOKABLE auto getImageName(const QModelIndex& index) -> QString;
+            // 在index下添加孩子节点，孩子节点的类型是type
+            Q_INVOKABLE void appendChild(const QModelIndex& index, int type);
+            // 返回总共的节点数
+            Q_INVOKABLE auto getTotalNodeCnt() -> qsizetype;
 
-}//namespace solar
+        private:
+            QSharedPointer<TopoTreeModel> tree_model; // 这里要写成智能指针吗？？？
+    };
+
+} // namespace solar
 
 #endif // TOPOTREEVIEWCONTROLLER_H

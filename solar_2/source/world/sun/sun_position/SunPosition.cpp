@@ -1,64 +1,40 @@
 
 #include "world/sun/sun_position/SunPosition.h"
-//include <format>
+#include <utils/ParaUtils.h>
 
-namespace solar
-{
-/*
- *     kAzimuth,
-    kElevation,
-    kIrradiance,
-    kTrackable,
-*/
-void SunPosition::setPara(const int property_type, const QVariant& value)
-{
-    switch (property_type) {
-    case kAzimuth:
-        azimuth_ = value.toDouble();
-        break;
-    case kElevation:
-        elevation_ = value.toDouble();
-        break;
-    case kIrradiance:
-        irradiance_ = value.toDouble();
-        break;
-    case kTrackable:
-        trackable_ = value.toBool();
-        break;
-    default:
-        throw "ERROR::NO SUCH PARA_PROPERTY IN SUNPOSITION:"+std::to_string(property_type);
-        break;
-    }
-}
-auto SunPosition::getPara(const int property_type) const -> QVariant
-{
-    QVariant ret;
-    switch (property_type) {
-    case kAzimuth:
-        ret = azimuth_;
-        break;
-    case kElevation:
-        ret = elevation_;
-        break;
-    case kIrradiance:
-        ret = irradiance_;
-        break;
-    case kTrackable:
-        ret = trackable_;
-        break;
-    default:
-        throw "ERROR::NO SUCH PARA_PROPERTY IN SUNPOSITION:"+std::to_string(property_type);
-        break;
-    }
+using namespace solar;
 
-    return ret;
-}
-void SunPosition::testPrint() const
+void solar::SunPosition::setPara(const std::string& property_type, const QVariant& value)
 {
-//    qDebug() << std::format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
-//                                azimuth_, elevation_, irradiance_, trackable_);
+    ::solar::setPara(property_type, value, this);
 }
 
+auto solar::SunPosition::getPara(const std::string& property_type) -> QVariant
+{
+    return ::solar::getPara(property_type, this);
+}
 
-} // namespace solar
+void solar::SunPosition::testPrint() const
+{
+   qDebug() << format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
+                               azimuth_, elevation_, irradiance_, trackable_);
+}
+
+// namespace solar
+// {
+// /*
+//  *     kAzimuth,
+//     kElevation,
+//     kIrradiance,
+//     kTrackable,
+// */
+
+// void SunPosition::testPrint() const
+// {
+// //    qDebug() << std::format("\t SunPosition:: azimuth={}, elevation={}, irradiance={}, trackable={}",
+// //                                azimuth_, elevation_, irradiance_, trackable_);
+// }
+
+
+// } // namespace solar
 

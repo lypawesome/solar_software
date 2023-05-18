@@ -1,31 +1,32 @@
-#ifndef RECEIVER_H
-#define RECEIVER_H
+#ifndef HELIOSAT_H
+    #define HELIOSAT
 
-#include "utils/Para.h"
-#include "utils/Utils.h"
+    #include "utils/Para.h"
+    #include "utils/Utils.h"
 
-#include <boost/describe.hpp>
+    #include <boost/describe.hpp>
 
 namespace solar
 {
     class Material;
     class Geometry;
 
-    class Receiver : public Para
+    class Heliostat : public Para
     {
         public:
-            ~Receiver() override = default;
-            Receiver() = default;
+            virtual ~Heliostat() = default;
+            Heliostat() = default;
 
             void setPara(const std::string& property_type, const QVariant& value) override;
             [[nodiscard]] auto getPara(const std::string& property_type) -> QVariant override;
             void testPrint() const override;
-#include <utils/class_name.inc>
+    #include <utils/class_name.inc>
 
         private:
             std::shared_ptr<Material> material_;
             std::shared_ptr<Geometry> geometry_;
-            BOOST_DESCRIBE_CLASS(Receiver, (Para), (), (), (material_, geometry_))
+            // std::shared_ptr<Tracker> tracker_;    //tracker要创建
+            BOOST_DESCRIBE_CLASS(Heliostat, (Para), (), (), (material_, geometry_))
     };
 
 } // namespace solar

@@ -2,19 +2,15 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include <vector>
-
 #include <QVariant>
-#include<QDebug>
 
-#include"utils/Vec3.h"
-#include <any>
-#include"utils/Utils.h"
-#include "utils/Vec2.h"
+#include <string>
 
-namespace solar{
+namespace solar
+{
 
-    enum GeometryType{
+    enum GeometryType
+    {
         kGeometryRectangle,
         kGeometryParabolic,
         kGeometryHyperbolic,
@@ -25,33 +21,18 @@ namespace solar{
 
     class Geometry
     {
-    public:
-        Geometry();
+        public:
+            virtual ~Geometry() = default;
+            Geometry();
 
-        virtual void setPara(const int property_type, const QVariant& value) = 0;
-        virtual auto getPara(const int property_type) const -> QVariant = 0;
-        virtual GeometryType getType()=0;
+            virtual void setPara(const std::string& property_type, const QVariant& value) = 0;
+            virtual auto getPara(const std::string& property_type) -> QVariant = 0;
+            [[nodiscard]] virtual auto getType() const -> GeometryType = 0;
 
-//    protected:
-//        GeometryType type_;
-
-        
-
-
+            //    protected:
+            //        GeometryType type_;
     };
 
-    
-
-    
-
-   
-
-   
-
-   
-   
-
-    
     // //圆锥面
     // class Cone : public Geometry
     // {
@@ -66,7 +47,6 @@ namespace solar{
 
     //     GeometryType type_;
     // };
-
 
     // /*
     //  * ===================================================================
@@ -93,8 +73,6 @@ namespace solar{
 
     // };
 
-
-
     // class FunctionZ : public Geometry
     // {
     // public:
@@ -112,6 +90,6 @@ namespace solar{
 
     // };
 
-}
+} // namespace solar
 
 #endif // SHAPERT_H

@@ -1,8 +1,30 @@
 #include "scene/Cloud.h"
+#include <utils/Grid.h>
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+solar::Cloud::Cloud() { grid_ = std::make_shared<Grid>(); }
+
+void solar::Cloud::setPara(const std::string& property_type, const QVariant& value)
 {
-    
+    ::solar::setPara(property_type, value, this);
+}
+
+auto solar::Cloud::getPara(const std::string& property_type) -> QVariant
+{
+    return ::solar::getPara(property_type, this);
+}
+
+void solar::Cloud::testPrint() const
+{
+    qDebug() << "Cloud::";
+    grid_->testPrint();
+}
+
+// namespace solar
+// {
+
 //    /*
 //     * ==============================================Cloud==================================================
 //     *      kGrid,
@@ -68,4 +90,4 @@ namespace solar
 //        grid_->testPrint();
 //    }
 
-}
+// }

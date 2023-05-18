@@ -1,46 +1,14 @@
 #include "topology/geometry/BSpline.h"
+#include <utils/ParaUtils.h>
 
-namespace solar
-{
-    
+using namespace solar;
 
-/*
- * ===========================BSpline==========================
-*/
-void BSpline::setPara(const int property_type, const QVariant& value)
+void solar::BSpline::setPara(const std::string& property_type, const QVariant& value)
 {
-    switch(property_type)
-    {
-    case kFile:
-    {
-        file_ = value.toString().toStdString();
-        break;
-    }
-    default:
-    {
-        throw "ERROR::BSpline::setPara()::no such property_type: "
-            + std::to_string(property_type);
-        break;
-    }
-    }
+    ::solar::setPara(property_type, value, this);
 }
-auto BSpline::getPara(const int property_type) const -> QVariant
+
+auto solar::BSpline::getPara(const std::string& property_type) -> QVariant
 {
-    QVariant ret;
-    switch(property_type)
-    {
-    case kFile:
-    {
-        ret = QString::fromStdString(file_);
-        break;
-    }
-    default:
-    {
-        throw "ERROR::BSpline::getPara()::no such property_type: "
-            + std::to_string(property_type);
-        break;
-    }
-    }
-    return ret;
-}
+    return ::solar::getPara(property_type, this);
 }

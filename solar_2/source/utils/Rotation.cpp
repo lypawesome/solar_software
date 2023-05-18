@@ -1,6 +1,9 @@
 
 #include "utils/Rotation.h"
-//#include <format>
+#include <utils/ParaUtils.h>
+
+#include <QDebug>
+
 namespace solar
 {
 
@@ -9,54 +12,18 @@ namespace solar
     kAngle
 */
 
-void Rotation::setPara(const int property_type, const QVariant& value)
+void Rotation::setPara(const std::string& property_type, const QVariant& value)
 {
-    switch(property_type)
-    {
-    case kAxis:
-    {
-        axis_ = value.value<Vec3>();
-        break;
-    }
-    case kAngle:
-    {
-        angle_ = value.toDouble();
-        break;
-    }
-    default:
-    {
-        throw "ERROR::Rotation::setPara()::no such property_type";
-        break;
-    }
-    }
+    ::solar::setPara(property_type, value, this);
 }
-auto Rotation::getPara(const int property_type) const -> QVariant
+auto Rotation::getPara(const std::string& property_type) -> QVariant
 {
-    QVariant ret;
-    switch(property_type)
-    {
-    case kAxis:
-    {
-        ret = QVariant::fromValue(axis_);
-        break;
-    }
-    case kAngle:
-    {
-        ret = angle_;
-        break;
-    }
-    default:
-    {
-        throw "ERROR::Rotation::setPara()::no such property_type";
-        break;
-    }
-    }
-    return ret;
+    return ::solar::getPara(property_type, this);
 }
 void Rotation::testPrint() const
 {
-//    qDebug() <<std::format("\t Rotation::axis=({},{},{}), angle={}",
-//                            axis_.x(),axis_.y(), axis_.z(),angle_);
+   qDebug() << format("\t Rotation::axis=({},{},{}), angle={}",
+                           axis_.x(),axis_.y(), axis_.z(),angle_);
 }
 
 }   // namespace solar

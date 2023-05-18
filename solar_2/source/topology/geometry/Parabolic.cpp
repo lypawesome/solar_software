@@ -1,55 +1,14 @@
 #include "topology/geometry/Parabolic.h"
+#include <utils/ParaUtils.h>
 
-namespace solar
+using namespace solar;
+
+void solar::Parabolic::setPara(const std::string& property_type, const QVariant& value)
 {
-    /*
- * ==========================Parabolic================================
- * kA, kB
-*/
-void Parabolic::setPara(const int property_type, const QVariant& value)
-{
-    switch(property_type)
-    {
-    case kA:
-    {
-        a_ = value.toDouble();
-        break;
-    }
-    case kB:
-    {
-        b_ = value.toDouble();
-        break;
-    }
-    default:
-    {
-        throw "ERROR::Parabolic::setPara()::no such property_type: "
-            + std::to_string(property_type);
-        break;
-    }
-    }
+    ::solar::setPara(property_type, value, this);
 }
-auto Parabolic::getPara(const int property_type) const -> QVariant
+
+auto solar::Parabolic::getPara(const std::string& property_type) -> QVariant
 {
-    QVariant ret;
-    switch(property_type)
-    {
-    case kA:
-    {
-        ret = a_;
-        break;
-    }
-    case kB:
-    {
-        ret = b_;
-        break;
-    }
-    default:
-    {
-        throw "ERROR::Parabolic::getPara()::no such property_type: "
-            + std::to_string(property_type);
-        break;
-    }
-    }
-    return ret;
-}
+    return ::solar::getPara(property_type, this);
 }

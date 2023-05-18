@@ -6,30 +6,36 @@
 旋转：包括旋转轴、旋转角度
 */
 
-#include"utils/Utils.h"
-#include"utils/Vec3.h"
-#include <unordered_map>
-#include <any>
-#include <QVariant>
-#include <QDebug>
+#include "utils/Utils.h"
+#include "utils/Vec3.h"
 
-namespace solar{
+#include <any>
+#include <unordered_map>
+
+#include <QVariant>
+
+#include <boost/describe.hpp>
+
+namespace solar
+{
     class Rotation
     {
         public:
-            Rotation(const Vec3& axis=Vec3(1,0,0), double angle=0) : axis_(axis), angle_(angle){};
+            Rotation(const Vec3& axis = Vec3(1, 0, 0), double angle = 0)
+                : axis_(axis), angle_(angle)
+            {
+            }
 
-
-            void setPara(const int property_type, const QVariant& value) ;
-            auto getPara(const int property_type) const -> QVariant ;
-            void testPrint() const ;
+            void setPara(const std::string& property_type, const QVariant& value);
+            auto getPara(const std::string& property_type) -> QVariant;
+            void testPrint() const;
+#include <utils/class_name.inc>
 
         private:
-            Vec3 axis_;          //旋转轴
-            double angle_;       //旋转角度
+            Vec3 axis_;    // 旋转轴
+            double angle_; // 旋转角度
+            BOOST_DESCRIBE_CLASS(solar::Rotation, (), (), (), (axis_, angle_))
     };
-}
-
-
+} // namespace solar
 
 #endif // ROTATION_H
