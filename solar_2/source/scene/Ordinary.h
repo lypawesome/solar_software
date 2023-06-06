@@ -1,21 +1,20 @@
-#ifndef SUN_H
-#define SUN_H
+#ifndef ORDINARY_H
+#define ORDINARY_H
 
 #include "utils/Para.h"
+#include "topology/material/Material.h"
+#include "topology/geometry/Geometry.h"
 #include "utils/Utils.h"
 
 #include <boost/describe.hpp>
 
-namespace solar
-{
-    class SunShape;
-    class SunPosition;
+namespace solar{
 
-    class Sun : public Para
+    class Ordinary : public Para
     {
         public:
-            Sun();
-            
+            virtual ~Ordinary(){}
+            Ordinary();
 
             void setPara(const std::string& property_type, const QVariant& value) override;
             [[nodiscard]] auto getPara(const std::string& property_type) -> QVariant override;
@@ -23,12 +22,13 @@ namespace solar
 #include <utils/class_name.inc>
 
         private:
-            std::shared_ptr<SunShape> sunshape_;
-            std::shared_ptr<SunPosition> sun_position_;
+            std::shared_ptr<Geometry> geometry_;
+            BOOST_DESCRIBE_CLASS(Ordinary, (Para), (), (), (geometry_))
 
-            BOOST_DESCRIBE_CLASS(Sun, (Para), (), (), (sunshape_, sun_position_))
+
     };
 
-} // namespace solar
+}
+
 
 #endif

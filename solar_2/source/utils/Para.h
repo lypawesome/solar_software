@@ -56,6 +56,7 @@ namespace solar
             /// \brief 输出参数的内容进行测试
             virtual void testPrint() const = 0;
 
+
         protected:
             Para() = default; 
     };

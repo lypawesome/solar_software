@@ -47,12 +47,17 @@ namespace solar
             // 设置该节点的第column个属性
             void setNodeData(QVariant data, qsizetype column);
 
-            // 该topo节点对应的ParaTreeModel在paracontroller中QList的下标
-            auto getParaTreeId(const QSharedPointer<ParaTreeViewController>& para_tree_control) -> qsizetype;
+            // // 该topo节点对应的ParaTreeModel在paracontroller中QList的下标
+            // auto getParaTreeId(const QSharedPointer<ParaTreeViewController>& para_tree_control) -> qsizetype;
             // 返回NODE、SHAPE、TRACKER、ARRAY
             auto getParaModelType() const -> int;
             // 返回所有子孙后代的个数--递归
             auto getOffspringCount() const -> qsizetype;
+
+            // 获得对应的ParaTreeModel的指针
+            auto getParaTreeModel() -> QSharedPointer<ParaTreeModel> ;
+            // 设置这一TopoTreeNode对应的ParaTreeModel的指针
+            void setParaTreeModel( QSharedPointer<ParaTreeModel> para_tree_model);
 
         private:
             QSharedPointer<TopoTreeNode> parent_node;        // 父节点的指针

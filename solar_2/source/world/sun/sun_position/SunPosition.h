@@ -2,7 +2,8 @@
 #ifndef SUNPOSITION_H
 #define SUNPOSITION_H
 
-/*
+/**
+ * ？？？？DNI与irradiance的区别？？？
 
 */
 

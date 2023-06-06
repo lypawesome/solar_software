@@ -8,8 +8,12 @@ import QtQuick.Controls
 */
 
 Rectangle{
-    id:topoTreeview_rect
+    id: topoTreeview_rect
+    
     anchors.fill: parent
+    
+    // border.width: 2
+    // border.color: "blue"
 
     required property var treeModel
     signal updateTopoSelection(int index)
@@ -19,6 +23,7 @@ Rectangle{
 
     function updateSelection(index)
     {
+        console.log("------TopoTreeView-updateSelection")
         if(topo_sel.currentHasSelection){
            topoControl.appendChild(topo_sel.currentIndex,index)
             //！！！这里这句代码，不起作用
@@ -48,17 +53,21 @@ Rectangle{
 //        }
 //    }
 
+    
     TreeView{
         id: topoTreeview
-        anchors.fill: parent
+        anchors.fill: topoTreeview_rect
+        // anchors.top: topoTreeview_rect.top
+        // anchors.bottom: topoTreeview_rect.bottom
 
         //headerVisible: false;
         //backgroundVisible: false
 
         //style: topo_treeview_style            //还没写
         model:topoTreeview_rect.treeModel
-
-
+        // pointerNavigationEnabled: true
+        // selectionBehavior: TableView.SelectRows
+        boundsBehavior: Flickable.DragOverBounds        //flickable默认是软边界，这句代码取消轻弹功能，只允许滑动
 
         selectionModel: topo_sel
         //delegate: treeview_item_delegate
@@ -93,11 +102,32 @@ Rectangle{
 //            }
 //        }
 
+        // onFlickStarted:{
+        //     console.log("----------flicking-------------")
+        //     console.log("flick_originX: "+topoTreeview.originX + 
+        //             onFlickStarted:{
+        //     console.log("----------flicking-------------")
+        //     console.log("flick_originX: "+topoTreeview.originX + 
+        //                 " flick_originY: "+topoTreeview.originY)
+        //     console.log("treeview_width: "+topoTreeview.width + 
+        //                 " treeview_height: "+topoTreeview.height)
+        //     console.log("parent_width: "+topoTreeview_rect.width + 
+        //                 " parent_height: "+topoTreeview_rect.height)
+        //                 console.log("treeview.parent=" + topoTreeview.parent.id)
+        // }    " flick_originY: "+topoTreeview.originY)
+        //     console.log("treeview_width: "+topoTreeview.width + 
+        //                 " treeview_height: "+topoTreeview.height)
+        //     console.log("parent_width: "+topoTreeview_rect.width + 
+        //                 " parent_height: "+topoTreeview_rect.height)
+        //                 console.log("treeview.parent=" + topoTreeview.parent.id)
+        // }
+
+        
 
 
 
         delegate: Item{
-            id: root
+            id: topo_item_root
 
             implicitWidth: parent.width>0 ? parent.width: 200
             implicitHeight:30
@@ -116,28 +146,28 @@ Rectangle{
 
             //鼠标点击
             //这部分在mousearea里放了，不需要再写
-//            TapHandler{
-//                onTapped: treeView.toggleExpanded(row)
-//                //sel.SelectCurrent
-//            }
+
 
             Rectangle{
                 id: topoTreeviewItem_rect
                 anchors.fill:parent
                 anchors.leftMargin: 5
+                anchors.rightMargin: 5          //！！！无作用
                 color: topo_sel.currentIndex===topoTreeview.index(row,column)?"skyblue" :
-                                           (topoTreeviewItem_mousearea.containsMouse?"lightgray":"transparent")
+                                           (topoTreeviewItem_mousearea.containsMouse
+                                           || topoTreeviewItem_textfield_mousearea.containsMouse
+                                           ?"lightgray":"transparent")
 
                 property var indicatorsrc:["arrow_down.png", "arrow_right.png"]
                 Image{
                     id: indicator
                     anchors.verticalCenter: parent.verticalCenter
-                    visible: root.isTreeNode&& root.hasChildren
-                    x:padding + (root.depth * root.indent)
+                    visible: topo_item_root.isTreeNode&& topo_item_root.hasChildren
+                    x:padding + (topo_item_root.depth * topo_item_root.indent)
                     width: 15
                     height: 15
                     source: "qrc:/image/indicator_icon/"
-                            + (root.expanded ? topoTreeviewItem_rect.indicatorsrc[0]:topoTreeviewItem_rect.indicatorsrc[1])
+                            + (topo_item_root.expanded ? topoTreeviewItem_rect.indicatorsrc[0]:topoTreeviewItem_rect.indicatorsrc[1])
 
                     MouseArea{
                         anchors.fill: parent
@@ -155,7 +185,25 @@ Rectangle{
                     anchors.bottom: parent.bottom
                     color: "transparent"
 
-                    property var imgsrc:["node.png","shape.png","tracker.png","array.png"]
+                    MouseArea{
+                        id: topoTreeviewItem_mousearea
+                        anchors.fill: parent
+                        hoverEnabled:true
+
+                        //propagateComposedEvents: true       //让TextField中的MouseArea也能接收到信号
+
+                        onClicked: (mouse)=>{
+                            topo_sel.setCurrentIndex(topoTreeview.index(row,column),0x0010)
+                            topo_sel.currentHasSelection= true
+
+                            console.log(row+" "+column+" "+topo_textfield.text)
+
+                            // 更改右下方的para树状视图
+                            lower_st.currentIndex = paraControl.getIDAccordingToIndex(topo_sel.currentIndex)
+                        }
+                    }
+
+                    property var imgsrc:["node.png","heliostat.png","receiver.png","brace.png"]
                     Image{
                         id: img
                         anchors.left: parent.left
@@ -166,8 +214,8 @@ Rectangle{
                         source: "qrc:/image/settings_icon/" + topoTreeviewItem_rightrect.imgsrc[model.type]
                     }
 
-                    Text{
-                        id:label
+                    TextField{
+                        id:topo_textfield
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: img.right
                         anchors.right: parent.right
@@ -175,20 +223,48 @@ Rectangle{
                         //width:root.width - root.padding - x
                         clip: true
                         text: model.name
-                    }
+                        activeFocusOnPress: true
 
-                    MouseArea{
-                        id: topoTreeviewItem_mousearea
-                        anchors.fill: parent
-                        hoverEnabled:true
-
-                        onClicked: {
-                            topo_sel.setCurrentIndex(topoTreeview.index(row,column),0x0010)
-                            topo_sel.currentHasSelection= true
-
-                            console.log(row+" "+column+" "+label.text)
+                        background: Rectangle{      //删去TextField本身自带的边框和背景色
+                            border.width:0
+                            color: topo_textfield.activeFocus ? "white" : "transparent"
                         }
+
+                        
+                        /*
+                            ！！！暂时先这样写。目前没找到更好的办法
+                            将focus手动置为false，会导致再次调用onEditingFinished
+                        */
+                        onEditingFinished: {                //输入框失焦本身就会触发EditingFinished信号，没必要在这里再设置一个focus=false
+                            console.log("edit finished")
+                            topo_textfield.focus = false
+                            topoControl.updateNodeName(topoTreeview.index(row,column),topo_textfield.text)
+                        }
+                        
+                        
+
+                        MouseArea{
+                            id: topoTreeviewItem_textfield_mousearea
+                            anchors.fill: parent
+                            propagateComposedEvents: true
+                            hoverEnabled: true
+
+                            onDoubleClicked: {
+                                console.log("double click textfield")
+                                topo_textfield.forceActiveFocus(Qt.MouseFocusReason) //所以，这句代码是在哪里找到的，文档里没找到
+                            
+                            }
+                            onClicked: {
+                                mouse.accepted = false
+                            }
+
+                            
+                        }
+
+                        
                     }
+
+                    
 
                 }
 
@@ -198,116 +274,25 @@ Rectangle{
         }
 
 
+        //！！！！还没写完
+        //！！！！键盘输入好像有些问题，键盘输入容易被其他组件劫持，有时间换成鼠标
+        Keys.onPressed: (event)=> {
+            console.log("press delete");
+            // 如果已经选中了一行，并且选中的不是根节点
+            if( event.key === Qt.Key_Delete
+                && topo_sel.currentHasSelection 
+                && topo_sel.currentIndex!==topoTreeview.index(0,0))
+            {
+                console.log("即将删除节点");
+                //写删除的逻辑
+                event.accepted = true;
+            }
+        }
+
         Component.onCompleted: {
             console.log(topoTreeview.columns+"  "+topoTreeview.rows)
         }
 
-
-//        itemDelegate:Rectangle{
-//            id:topo_treeview_item_rect
-
-//            color: styleData.selected ? "lightgreen" : (topo_treeview_item_mousearea.containsMouse?"lightgray":"transparent")
-
-//            Image{
-//                id:topo_treeview_item_img
-//                anchors.verticalCenter: parent.verticalCenter
-//                anchors.left:parent.left
-//                anchors.leftMargin:5
-//                source:"./settings_icon/" + mControl.getImageName(styleData.index)
-//                width:10
-//                height:10
-//            }
-
-//            //这里或许应该改为EditText
-//            Text{
-//                id:topo_treeview_item_text
-//                anchors.verticalCenter: parent.verticalCenter
-//                anchors.left:topo_treeview_item_img.right
-//                anchors.leftMargin: 5
-//                text: styleData.value
-//                font.pointSize: 10
-//                elide:styleData.elideMode
-//            }
-//            Drag.active:topo_treeview_item_mousearea.drag.active
-//            Drag.dragType: Drag.Automatic;      //选择自动开始拖动
-//            Drag.supportedActions: Qt.CopyAction;   //选择复制数据到DropArea
-//            Drag.onDragFinished: {              //拖拽结束
-
-//            }
-
-//            MouseArea{
-//                id:topo_treeview_item_mousearea
-//                anchors.fill:parent
-
-//                hoverEnabled: true
-//                acceptedButtons: Qt.LeftButton
-//                drag.target: topo_treeview_item_text
-
-//                onClicked: {        //单击：选中当前节点
-//                    sel.setCurrentIndex(styleData.index,0x0010)
-//                    sel.currentHasSelection = true
-//                    //emit: sel.selectionChanged()
-//                    console.log("click treeview: "+topo_treeview_item_text.text)
-//                }
-//                onDoubleClicked: {      //双击：刷新子节点
-//                    scene_settings_treeview.collapse(styleData.index)
-//                    //mControl.updateNode(styleData.index)
-//                    scene_settings_treeview.expand(styleData.index)
-//                }
-//            }
-
-//        }
-
-//        Component{
-//            id: topo_treeview_style
-//            TreeViewStyle{
-//                padding.left:2
-//                padding.right:2
-//                indentation: 10     //节点间的缩进
-
-//                rowDelegate: Rectangle {    //这里要改!!!!
-//                    //color:styleData.selected ? "blue":"red"
-//                    height:15
-//                }
-//                branchDelegate: Image{      //节点展开、收缩的图标
-//                    id: topo_treeview_style_branch_icon
-//                    source: {
-//                        return styleData.isExpanded ? "./tiny_icon/arrow_down.png" : "./tiny_icon/arrow_right.png"
-
-//                    }
-//                    width:10
-//                    height:10
-//                    MouseArea {
-//                        id:topo_treeview_style_branch_mousearea
-//                        anchors.fill: parent
-//                        hoverEnabled: true
-//                        drag.target: topo_treeview_style_branch_icon
-
-//                        //property bool isExpand: true        //这一部分的点击逻辑是否可以更改？？？
-//                        onClicked: {
-//                            /*
-//                            if(isExpand){
-//                                emit: scene_settings_treeview.expand(styleData.index)
-//                                isExpand = false
-//                            }
-//                            else{
-//                                emit: scene_settings_treeview.collapse(styleData.index)
-//                                isExpand = true
-//                            }
-//                            */
-//                            if(styleData.isExpanded)
-//                            {
-//                                topo_treeview.collapse(styleData.index)
-//                            }
-//                            else{
-//                                topo_treeview.expand(styleData.index)
-//                            }
-
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
 
 
@@ -316,5 +301,6 @@ Rectangle{
 
 
     }
+    
 
 }

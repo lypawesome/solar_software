@@ -6,17 +6,26 @@ namespace solar{
 
 Scene::Scene()
 {
-    topo_tree_control = QSharedPointer<TopoTreeViewController>(new TopoTreeViewController);
-    para_tree_control = QSharedPointer<ParaTreeViewController>(new ParaTreeViewController);
+    para_tree_control_ = QSharedPointer<ParaTreeViewController>(new ParaTreeViewController);
+    topo_tree_control_ = QSharedPointer<TopoTreeViewController>(new TopoTreeViewController);
 
-    sun = QSharedPointer<Sun>(new Sun);
-    location = QSharedPointer<Location>(new Location);
+    sun_ = QSharedPointer<Sun>(new Sun);
+    location_ = QSharedPointer<Location>(new Location);
+    air_ = QSharedPointer<Air>(new Air);
+    camera_ = QSharedPointer<Camera>(new Camera);
+    terrain_ = QSharedPointer<Terrain>(new Terrain);
+    cloud_ = QSharedPointer<Cloud>(new Cloud);
 
-    para_tree_control->addParaTreeModel(LOCATION,location);
-    para_tree_control->addParaTreeModel(SUN,sun);
+    para_tree_control_->addParaTreeModel(LOCATION,location_);
+    para_tree_control_->addParaTreeModel(SUN,sun_);
+    para_tree_control_->addParaTreeModel(AIR,air_);
+    para_tree_control_->addParaTreeModel(TERRAIN,terrain_);
+    para_tree_control_->addParaTreeModel(CAMERA,camera_);
+    para_tree_control_->addParaTreeModel(CLOUD,cloud_);
 
-    //给TopoTreeViewController加一个函数，让所有Topo节点对应的ParaTreeModel全部加到ParaTreeViewController中
-    // topo_tree_control -> setParaTreeModels(para_tree_control)
+    topo_tree_control_->setParaTreeController(para_tree_control_);
+    
+
 
 }
 

@@ -4,6 +4,8 @@
 #include <QQmlContext>
 
 #include "scene/Scene.h"
+#include "simulation/RayTracingParameter.h"
+
 
 auto main(int argc, char* argv[]) -> int
 {
@@ -19,9 +21,12 @@ auto main(int argc, char* argv[]) -> int
     // 设置上下文环境
     solar::Scene scene; // 要给scene类设置Q_OBJECT
     engine.rootContext()->setContextProperty(
-        "topoControl",
-        scene.topo_tree_control.get()); // 这里传入的应该是普通指针
-    engine.rootContext()->setContextProperty("paraControl", scene.para_tree_control.get());
+            "topoControl",scene.topo_tree_control_.get()); // 这里传入的应该是普通指针
+    engine.rootContext()->setContextProperty(
+            "paraControl", scene.para_tree_control_.get());
+
+    solar::RayTracingParameter raytracing_parameter;
+    engine.rootContext()->setContextProperty("rayTracingParameter",&(raytracing_parameter));
 
     engine.load(url);
 

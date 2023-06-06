@@ -1,6 +1,6 @@
 
 #include "tree/TopoTreeViewController.h"
-#include <qtypes.h>
+//#include <qtypes.h>
 
 namespace solar
 {
@@ -19,17 +19,19 @@ namespace solar
         tree_model->setNodeName(new_name.toString(), index);
     }
 
-    void TopoTreeViewController::updateNode(const QModelIndex& index) // !!!可能要删去
+    // !!!可能要删去
+    void TopoTreeViewController::updateNode(const QModelIndex& index) 
     {
-        QList<QVariant> list_sc;
-        list_sc.append(QString::fromLocal8Bit("sichuan"));
-        tree_model->appendChild(index, list_sc, 0);
+        // QList<QVariant> list_sc;
+        // list_sc.append(QString::fromLocal8Bit("sichuan"));
+        // tree_model->appendChild(index, list_sc, 0);
 
-        QList<QVariant> list_bj;
-        list_bj.append(QString::fromLocal8Bit("beijing"));
-        tree_model->appendChild(index, list_bj, 1);
+        // QList<QVariant> list_bj;
+        // list_bj.append(QString::fromLocal8Bit("beijing"));
+        // tree_model->appendChild(index, list_bj, 1);
     }
 
+    //！！！已经在qml中写了图片名，这个函数可以删去
     auto TopoTreeViewController::getImageName(const QModelIndex& index) -> QString // 可能要删去
     {
         return tree_model->getType(index); // type标记图片名称
@@ -42,29 +44,37 @@ namespace solar
     */
     void TopoTreeViewController::appendChild(const QModelIndex& index, int type)
     {
-        QList<QVariant> list;
-        QString name;
-        switch (type)
-        {
-        case 0:
-            name = "node";
-            break;
-        case 1:
-            name = "shape";
-            break;
-        case 2:
-            name = "tracker";
-            break;
-        case 3:
-            name = "array";
-            break;
-        }
-        list.append(name);
-        list.append(type);
+        qDebug()<<"--1";
+        QSharedPointer<ParaTreeModel> para_tree_model;
+        bool ret = tree_model->appendChild(index, type, 1,para_tree_model);
+        qDebug()<<"--2";
 
-        tree_model->appendChild(index, list, 1);
+        if(ret)
+        {
+            qDebug()<<"--3";
+            para_tree_control->addParaTreeModel(para_tree_model);
+            qDebug()<<"--4";
+        }
+        emit para_tree_control->paraTreeCntChanged();       //信号
     }
 
     auto TopoTreeViewController::getTotalNodeCnt() -> qsizetype { return tree_model->getTotalNodeCnt(); }
+
+    // 存一个指针
+    void TopoTreeViewController::setParaTreeController(const QSharedPointer<ParaTreeViewController> para_tree_control)
+    {
+        this->para_tree_control = para_tree_control;
+        auto para_tree_model = tree_model->getParaTreeModelAboutFirstNode();
+        this->para_tree_control->addParaTreeModel(para_tree_model);
+        // qDebug() <<"================root_node_para_tree = "<<para_tree_model.get();
+        // qDebug() <<"==================para tree cnt = "<< this->para_tree_control->getParaTreeModelCnt();
+        // qDebug() <<"==================para tree[6] = "<< this->para_tree_control->getTreeModel(6);
+    
+    }
+
+    // auto TopoTreeViewController::getParaTreeModelAboutRootNode() -> QSharedPointer<ParaTreeModel>
+    // {
+    //     return tree_model->getParaTreeModelAboutRootNode();
+    // }
 
 } // namespace solar

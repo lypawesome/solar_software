@@ -1,16 +1,31 @@
 #include "scene/Camera.h"
 #include <utils/ParaUtils.h>
-
+#include <utils/Format.h>
+#include <QDebug>
+#include <QString>
 using namespace solar;
 
 void solar::Camera::setPara(const std::string& property_type, const QVariant& value)
 {
     ::solar::setPara(property_type, value, this);
+    qDebug() <<"----camera::---value="<<value;
+    qDebug() <<"-----camera:: rotation-axis="<<rotation_.getPara("axis_")
+                            <<" rotation-angle="<<rotation_.getPara("angle_");
 }
 
 auto solar::Camera::getPara(const std::string& property_type) -> QVariant
 {
     return ::solar::getPara(property_type, this);
+}
+void solar::Camera::testPrint() const
+{
+    // qDebug() << QString(::solar::format("Camera: position={}, "
+    //                    "perspective={}",
+    //                    position_, perspective_).c_str());
+    qDebug() << QString(::solar::format("Camera: position=({},{},{}) "
+                       "perspective={}",
+                       position_.x(), position_.y(), position_.z(),perspective_).c_str());
+    rotation_.testPrint();
 }
 
 // namespace solar

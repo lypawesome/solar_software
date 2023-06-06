@@ -33,9 +33,18 @@ namespace solar
             Q_INVOKABLE void appendChild(const QModelIndex& index, int type);
             // 返回总共的节点数
             Q_INVOKABLE auto getTotalNodeCnt() -> qsizetype;
+        
+        public:
+            // 保存指向paratreeviewcontroller的指针，同时加上root_node的para_tree_model
+            // !!!!注意，要加的不是root_node的para_tree_model，root_node在ui中不可见，要加的是first_node的para_tree
+            void setParaTreeController(const QSharedPointer<ParaTreeViewController> para_tree_control);
+            // auto getParaTreeModelAboutRootNode() -> QSharedPointer<ParaTreeModel>;
 
         private:
-            QSharedPointer<TopoTreeModel> tree_model; // 这里要写成智能指针吗？？？
+            QSharedPointer<TopoTreeModel> tree_model; 
+
+            // 存一个指向右下方树状视图的指针，当增删topo节点时，也增加para中对应的model
+            QSharedPointer<ParaTreeViewController> para_tree_control;   
     };
 
 } // namespace solar

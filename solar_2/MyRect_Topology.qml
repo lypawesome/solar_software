@@ -13,6 +13,7 @@ Rectangle{
     /*
     ---------------------------------------------------------------------------------
     顶部的一行，包括左侧的若干个btn和右侧的文件输入
+    ！！！！宽度要改
     */
     Rectangle{
         id: topologyMenu_rect
@@ -20,6 +21,7 @@ Rectangle{
         anchors.left: parent.left
         anchors.right: parent.right
         height: 20
+        z: 3
         color: "lightgray"
 
 
@@ -41,7 +43,7 @@ Rectangle{
                 
                 anchors.margins: 2
                 
-                icon.source:imagesrc
+                icon.source: imagesrc
                 icon.color: topologyMenu_item_btn.hovered ? "blue":"green"
                 padding:3               //注意坑点：icon的大小受限于padding的大小，因为padding是button内部边界宽度
 
@@ -55,10 +57,10 @@ Rectangle{
 
 
                 onClicked: {
-                    console.log("click treeview menu: "+index+" "+name)
+                    console.log("--------click treeview menu: "+index+" "+name)
                     topo.updateTopoSelection(index)
                     //点击之后，在sel.currentIndex下添加一个孩子,要求孩子名与同级的均不相同，记得传入孩子类型
-                    //console.log("add "+name)
+                    // console.log("add "+name)
                     //topo.selFun(index)
 
                     /*
@@ -77,10 +79,10 @@ Rectangle{
         //！！！问题：node需要保留吗？？？
         ListModel{
             id:topologyMenu_listmodel
-            ListElement{ name:'Node';       imagesrc:'qrc:/image/settings_icon/node.png'}
-            ListElement{ name:'Heliosat';      imagesrc:'qrc:/image/settings_icon/heliosat.png'}
-            ListElement{ name:'Receiver';    imagesrc:'qrc:/image/settings_icon/receiver.png'}
-            
+            ListElement{ name:'Node';           imagesrc:'qrc:/image/settings_icon/node.png'}
+            ListElement{ name:'Heliostat';      imagesrc:'qrc:/image/settings_icon/heliostat.png'}
+            ListElement{ name:'Receiver';       imagesrc:'qrc:/image/settings_icon/receiver.png'}
+            ListElement{ name:'Ordinary';       imagesrc:'qrc:/image/settings_icon/brace.png'}
         }
 
         ListView{
@@ -92,7 +94,7 @@ Rectangle{
             //anchors.fill: parent
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 3
-            width: 60
+            width: 75
 
             orientation:ListView.Horizontal
             spacing:1
@@ -185,31 +187,40 @@ button与treeview之间的分割线
         anchors.top: topologyMenu_rect.bottom
         anchors.left:parent.left
         anchors.right:parent.right
-        height: 1
-        color: "gray"
+        height: 2
+        z: 3
+        color: "red"
     }
 
 
 /*
 ---------------------------------------------------------------
 treeview
+！！！
+当treeview个数较多时，Flickable的边界会超过这里的rectangle，这里只是用z定义不同组件显示的顺序
+没有找到更好的方法
 */
     Rectangle{
+        id: topology_topotreeview_rect
         anchors.top: topology_spliter.bottom
         anchors.left:parent.left
         anchors.right:parent.right
         anchors.bottom:parent.bottom
+        border.width: 2
+        border.color: "green"
+        z:0                     
 
         //topo部分的树状视图
         //!!!!!!!!!!!!!!!!!!!!!还没写好，先放着
         TopoTreeView{
-            anchors.fill: parent
+            anchors.fill: topology_topotreeview_rect
             id: topo
             treeModel: topoControl.getTreeModel()
 
             onUpdateTopoSelection: function(index){
                 updateSelection(index)
             }
+            
         }
 
     }

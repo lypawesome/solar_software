@@ -1,3 +1,6 @@
+#ifndef ELLIPTIC_H
+#define ELLIPTIC_H
+
 #include "topology/geometry/Geometry.h"
 #include <utils/Vec2.h>
 
@@ -25,3 +28,5 @@ namespace solar
             BOOST_DESCRIBE_CLASS(Elliptic, (Geometry), (), (), (a_, b_, c_, size_, type_))
     };
 } // namespace solar
+
+#endif

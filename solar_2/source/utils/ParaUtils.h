@@ -34,6 +34,8 @@ namespace solar
             {
                 if (D.name == property_type)
                 {
+                    qDebug() <<"D.name="<<D.name<<"  property_type="<<QString::fromStdString(property_type);
+                    
                     found = true;
                     *object.*D.pointer =
                         value.value<std::remove_reference_t<decltype(*object.*D.pointer)>>();
@@ -64,6 +66,7 @@ namespace solar
                 {
                     found = true;
                     ret.setValue(*object.*D.pointer);
+                    //qDebug() <<"----------*object.*D.pointer="<<*object.*D.pointer;
                 }
             });
         if (!found) [[unlikely]]
@@ -74,6 +77,7 @@ namespace solar
             throw ::solar::format("ERROR: {}::getPara(): No such property: {}", NamedClass::name(),
                                   property_type);
         }
+        //qDebug()<<"----------- ret = "<<ret;
         return ret;
     }
 

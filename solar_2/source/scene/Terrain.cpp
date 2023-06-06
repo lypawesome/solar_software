@@ -4,7 +4,6 @@
 
 using namespace solar;
 
-solar::Terrain::Terrain() { grid_ = std::make_shared<Grid>(); }
 
 void solar::Terrain::setPara(const std::string& property_type, const QVariant& value)
 {
@@ -19,7 +18,6 @@ auto solar::Terrain::getPara(const std::string& property_type) -> QVariant
 void solar::Terrain::testPrint() const
 {
     qDebug() << "Terrain::";
-    grid_->testPrint();
 }
 
 // namespace solar

@@ -1,3 +1,6 @@
+#ifndef PARABOLIC_H
+#define PARABOLIC_H
+
 #include "topology/geometry/Geometry.h"
 #include <utils/Vec2.h>
 
@@ -24,3 +27,5 @@ namespace solar
             BOOST_DESCRIBE_CLASS(Parabolic, (Geometry), (), (), (a_, b_, size_, type_))
     };
 } // namespace solar
+
+#endif

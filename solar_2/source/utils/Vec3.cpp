@@ -8,6 +8,15 @@
 
 namespace solar
 {
+
+auto Vec3::vec32String() -> std::string
+    {
+        return double2String(x()) + ","
+                + double2String(y()) + ","
+                + double2String(z());
+    }
+
+
 [[nodiscard]] PURE_FUNCTION auto Vec3::x() const -> double
 {
     return this->internal_vector[0];

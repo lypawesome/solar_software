@@ -96,10 +96,10 @@ Rectangle{
                                     ( paraControl.isEditable(paraTreeId, para_item_root.treeView.index(row,column)) ? component_editable :
                                     ( paraControl.isOptional(paraTreeId, para_item_root.treeView.index(row,column)) ? component_optional : component_no_operation ) )
 
-                    Component.onCompleted: {
-                        console.log("这一Item的参数："+model.name + " - "+model.para
-                                    + " row="+row + " column="+column)
-                    }
+                    // Component.onCompleted: {
+                    //     console.log("这一Item的参数："+model.name + " - "+model.para
+                    //                 + " row="+row + " column="+column)
+                    // }
                 }
 
                 //什么操作都没有，也没有特殊的函数
@@ -112,6 +112,7 @@ Rectangle{
 
                         Text{
                             anchors.fill: parent
+                            // ？？？？？？？？？？？？？？error
                             text: para_item_root.column===0 ? model.name : model.para
                         }
                     }
@@ -145,6 +146,8 @@ Rectangle{
                                 console.log("完成edit")
                                 console.log("新的text是：" + text_field.text)
                                 paraControl.updateNodePara(paraTreeId, para_item_root.treeView.index(row,column), text_field.text)
+                                // paraControl.printInfo(paraTreeId, para_item_root.treeView.index(row,column))
+
                             }
 
                             Component.onCompleted: {
@@ -209,7 +212,8 @@ Rectangle{
                                 //报错....
                                 paraControl.updateNodePara(paraTreeId,para_item_root.treeView.index(row,column),
                                                            component_optional_combobox.currentText)
-
+                                treeView.toggleExpanded(row)
+                                treeView.toggleExpanded(row)
                             }
 
                         }

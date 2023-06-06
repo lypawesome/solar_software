@@ -1,3 +1,7 @@
+#ifndef BSPLINE_H
+#define BSPLINE_H
+
+
 #include "topology/geometry/Geometry.h"
 #include <utils/Vec3.h>
 
@@ -5,6 +9,10 @@
 
 #include <boost/describe.hpp>
 
+
+/**
+ * 定义好BSpline的文件，所有相关参数直接从文件中读取
+*/
 namespace solar
 {
     /*
@@ -23,7 +31,7 @@ namespace solar
     class BSpline : public Geometry
     {
         public:
-            BSpline() = default;
+            BSpline() {}
 
             void setPara(const std::string& property_type, const QVariant& value) override;
             auto getPara(const std::string& property_type) -> QVariant override;
@@ -32,7 +40,7 @@ namespace solar
 #include <utils/class_name.inc>
 
         private:
-            std::string file_; // 文件，从该文件中读入B样条曲面的各种信息class Tracker{
+            std::string file_; // 文件，从该文件中读入B样条曲面的各种信息
 
             GeometryType type_ = kGeometryBSpline;
 
@@ -40,9 +48,9 @@ namespace solar
             int order_u_, order_v_; // 两个方向的阶数分别为：order_u、order_v
             std::vector<std::vector<Vec3>> control_points_; // 控制顶点
             std::vector<double> knot_u_, knot_v_;           // 两个方向的节点向量
-            BOOST_DESCRIBE_CLASS(BSpline, (Geometry), (), (),
-                                 (file_, type_, cnt_u_, cnt_v_, order_u_, order_v_, control_points_,
-                                  knot_u_, knot_v_))
+            BOOST_DESCRIBE_CLASS(BSpline, (Geometry), (), (), (file_))
     };
 
 } // namespace solar
+
+#endif

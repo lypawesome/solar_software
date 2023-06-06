@@ -69,7 +69,7 @@ Rectangle{
         FileDialog{
             id: world_file_set_fds
             title: "选择world文件"
-            currentFolder: shortcuts.desktop
+            //currentFolder: shortcuts.desktop    //！！！这里报错shortcuts没有定义
             //selectExisting: true
             //selectFolder: false
             //selectMultiple: false

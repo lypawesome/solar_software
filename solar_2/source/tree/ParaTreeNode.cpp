@@ -1,5 +1,5 @@
 
-#include <qtypes.h>
+//#include <qtypes.h>
 #include <utility>
 
 #include "tree/ParaTreeNode.h"
@@ -24,9 +24,8 @@ namespace solar
     {
         for (int index = 0; index < child_nodes.size(); index++)
         {
-            child_nodes.value(index)
-                ->deleteAllChild(); // 孩子节点用的是智能指针，只要不主动删除，是不会释放空间的
-            // child_nodes.value(index).clear();               //会把地址也删去
+            child_nodes.value(index)->deleteAllChild();     //先递归地删去孩子
+            //child_nodes.value(index).clear();               //会把地址也删去
         }
         child_nodes.clear();
     }
@@ -91,12 +90,14 @@ namespace solar
             throw "invalid column in Func: ParaTreeNode::setNodeData(data,column)";
         }
 
-        qDebug() << "ParaTreeNode中修改参数成功！";
-        qDebug() << "\t 原来参数为：" << node_datas[column].toString();
+        //qDebug() << "ParaTreeNode中修改参数成功！";
+        //qDebug() << "\t 原来参数为：" << node_datas[column].toString();
 
         node_datas[column] = data;
 
-        qDebug() << "\t 新的参数为：" << data.toString();
+
+
+        //qDebug() << "\t 新的参数为：" << data.toString();
     }
 
     // 设置该节点的状态:不可编辑不可选、可编辑、可选择
@@ -106,6 +107,21 @@ namespace solar
     auto ParaTreeNode::getState() -> ParaState { return state; }
 
     //==========================OPTIONAL专有函数=========================
+    
+    // 初始化该节点的全部选项
+    void ParaTreeNode::initOptions(QList<QString> options)
+    {
+        int cnt = option_childnodes.capacity();
+        if( cnt > 0) {
+            qDebug()<<"WARNING::ParaTreeNode::initOPtions::option_childnodes is not null"
+                    << "and it has "<<cnt<<" keys.";
+            // option_childnodes.clear();
+        }
+
+        for(auto key : options)
+            option_childnodes[key];
+    }
+
 
     // 获得该节点的全部选项
     auto ParaTreeNode::getOptions() -> QList<QString> { return option_childnodes.keys(); }
@@ -161,6 +177,48 @@ namespace solar
         QList<QString> option_keys = option_childnodes.keys();
         qDebug() << current_option << "\n" << option_keys;
         return option_keys.indexOf(current_option);
+    }
+
+    // 输出当前选项及选中的孩子列表
+    void ParaTreeNode::printCurrentChild()
+    {
+        qDebug() <<"\t"<<" has child: "<<childCount();
+        for(auto child : child_nodes)
+        {
+            qDebug() <<"\t child node: "<<child->data(0).toString()<<", "<<child->data(1).toString();
+        }
+    }
+    // 输出所有option对应的孩子列表
+    void ParaTreeNode::printAllOptionChild()
+    {
+        int cnt = option_childnodes.size();
+        qDebug() <<"\t has option cnt: "<<cnt;
+        auto key_list = option_childnodes.keys();
+        qDebug() <<"\t all options: "<<key_list;
+        for(int i=0; i<cnt;i++)
+        {
+            auto child_list = option_childnodes.value(key_list.at(i));
+            qDebug() <<"\t option: "<<key_list.at(i) <<" has child cnt: "<<child_list.size();
+            for(auto child : child_list)
+            {
+                qDebug() <<"\t\t "<<child->data(0).toString() <<", "<<child->data(1).toString();
+            }
+        }
+    }
+    // 输出某个option对应的孩子列表
+    void ParaTreeNode::printOptionChild()
+    {
+
+    }
+
+    void ParaTreeNode::printInfo()
+    {
+        qDebug() <<"-----parent:"<<parent_node;
+        if(parent_node)
+            qDebug() <<"-------parent: "<<parent_node->data(0).toString()
+                        <<", "<<parent_node->data(1).toString();
+        qDebug() <<"-----para tree node: "<<data(0).toString()<<", "<<data(1).toString();
+        printCurrentChild();
     }
 
 } // namespace solar

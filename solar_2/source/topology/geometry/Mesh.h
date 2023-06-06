@@ -1,7 +1,14 @@
+#ifndef MESH_H
+#define MESH_H
+
 #include "topology/geometry/Geometry.h"
 #include <utils/Vec3.h>
 
 #include <boost/describe.hpp>
+
+/**
+ * 只需要输入文件路径，其它参数在文件中设置即可
+*/
 
 namespace solar
 {
@@ -12,7 +19,7 @@ namespace solar
     class Mesh : public Geometry
     {
         public:
-            Mesh() = default;
+            Mesh() {}
 
             void setPara(const std::string& property_type, const QVariant& value) override;
             auto getPara(const std::string& property_type) -> QVariant override;
@@ -26,6 +33,8 @@ namespace solar
 
             std::vector<std::vector<Vec3>> points_;
             std::vector<std::vector<Vec3>> normals_;
-            BOOST_DESCRIBE_CLASS(Mesh, (Geometry), (), (), (file_, type_, points_, normals_))
+            BOOST_DESCRIBE_CLASS(Mesh, (Geometry), (), (), (file_))
     };
 } // namespace solar
+
+#endif

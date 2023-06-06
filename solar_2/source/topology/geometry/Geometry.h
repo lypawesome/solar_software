@@ -16,14 +16,17 @@ namespace solar
         kGeometryHyperbolic,
         kGeometryElliptic,
         kGeometryBSpline,
-        kGeometryMesh
+        kGeometryMesh,
+
+        kGeometryCylinder,
+        kGeometryMultiPanelComprisedOfHeatTube,
     };
 
     class Geometry
     {
         public:
             virtual ~Geometry() = default;
-            Geometry();
+            //这里不必写抽象类的构造函数，会报错...不明原因
 
             virtual void setPara(const std::string& property_type, const QVariant& value) = 0;
             virtual auto getPara(const std::string& property_type) -> QVariant = 0;

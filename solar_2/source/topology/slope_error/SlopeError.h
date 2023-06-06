@@ -3,6 +3,10 @@
 #define SLOPEERROR_H
 
 
+/*
+    删去
+*/
+
 namespace solar{
 
 class SlopeError

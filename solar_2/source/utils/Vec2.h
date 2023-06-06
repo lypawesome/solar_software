@@ -3,6 +3,8 @@
 #define VEC2_H
 
 #include <QMetaType>
+#include "utils/Utils.h"
+
 namespace solar
 {
 
@@ -18,6 +20,9 @@ public:
     void setY(double y){e[1]=y;}
 
     double& operator[] (int index){return e[index];}
+
+    auto vec2ToString() -> std::string;
+    
 
 private:
     double e[2];

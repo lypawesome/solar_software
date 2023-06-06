@@ -307,6 +307,14 @@ ApplicationWindow {
         }
     }
 
+// /*
+//     测试，点击后，让别的地方失焦
+//      ---测试不可行
+// */
+// Pane{
+//     anchors.fill: parent
+//     focus: Qt.ClickFocus
+// }
 
 /*
 ==========================================================================
@@ -457,10 +465,19 @@ ApplicationWindow {
 
                         currentIndex: 0
 
-                        Repeater{
-                            model:2
+                        // Component{
+                            
+                        // }
 
-                            Rectangle{
+                        // ！！！！！！问题：：每次TopoTreeModel更新，paraTreeModel的个数都可能会发生变化，如何让其重新加载？？？
+                        Repeater{
+                            
+                            id: para_st_repeater
+                            //model: paraControl.getParaTreeModelCnt()
+                            model: paraControl.para_cnt
+                            
+
+                            delegate: Rectangle{
                                 color: "pink"
                                 Text{               //先写个Text判断页面有没有换
                                     id: temporary_text
@@ -469,19 +486,30 @@ ApplicationWindow {
                                     anchors.right: parent.right
                                     height: 20
 
-                                    text: "页面序号：" + index
+                                    text: paraControl.getLabelTxt(index)
                                 }
 
                                 //！！！！这个组件还有很多需要更改
+                                // 问题：：每次Index对应的index都会更改，是每次都会变化吗
                                 ParaTreeView{
                                     anchors.top: temporary_text.bottom
                                     anchors.left: parent.left
                                     anchors.right: parent.right
-                                    anchors.bottom: parent.bottom
+                                    anchors.bottom: parent.bottom 
 
                                     treeModel: paraControl.getTreeModel(index)
                                     paraTreeId: index
                                 }
+                            }
+
+                            // 每次topo中增加节点或删除节点，就会重新加载所有的para model
+                            // ！！！重新加载后，会导致之前设置的参数变回初始值----是否是数据结构没有改变
+                            function repeaterModelCntChange(){
+                                para_st_repeater.model = paraControl.para_cnt
+                            }
+
+                            Component.onCompleted:{
+                                paraControl.paraTreeCntChanged.connect(repeaterModelCntChange)
                             }
                         }
 

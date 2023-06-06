@@ -3,6 +3,8 @@
 
 using namespace solar;
 
+
+
 void solar::Hyperbolic::setPara(const std::string& property_type, const QVariant& value)
 {
     ::solar::setPara(property_type, value, this);

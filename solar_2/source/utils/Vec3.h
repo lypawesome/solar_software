@@ -54,6 +54,11 @@ public:
         -> std::array<double, 3>;
     [[nodiscard]] PURE_FUNCTION auto to_string() const -> std::string;
 
+    // 返回string的样式
+    auto vec32String() -> std::string ;
+   
+
+
 private:
     vcl::Vec4d internal_vector{};
 };

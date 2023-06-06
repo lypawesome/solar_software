@@ -1,3 +1,6 @@
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
+
 #include "topology/geometry/Geometry.h"
 #include <utils/Vec2.h>
 
@@ -9,7 +12,7 @@ namespace solar
     class Rectangle : public Geometry
     {
         public:
-            Rectangle() = default;
+            Rectangle(Vec2 size=Vec2(1,1)) : size_(size){}
 
             void setPara(const std::string& property_type, const QVariant& value) override;
             auto getPara(const std::string& property_type) -> QVariant override;
@@ -19,6 +22,8 @@ namespace solar
         private:
             Vec2 size_; // size_.x--长，size_.y--宽
             GeometryType type_ = kGeometryRectangle;
-            BOOST_DESCRIBE_CLASS(Rectangle, (Geometry), (), (), (size_, type_))
+            BOOST_DESCRIBE_CLASS(Rectangle, (Geometry), (), (), (size_))
     };
 } // namespace solar
+
+#endif

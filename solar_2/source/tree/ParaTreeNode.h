@@ -62,8 +62,14 @@ namespace solar
             auto getState() -> ParaState;
 
             // OPTIONAL专有的函数，在使用之前，要先判断是否为OPTIONAL
+
+            // 初始化该节点的全部选项
+            void initOptions(QList<QString> options);
+
             // 获得该节点的全部选项
             auto getOptions() -> QList<QString>;
+
+
             // 获得该节点的某个选项的孩子节点列表
             auto getOptionChilds(const QString& option) -> QList<QSharedPointer<ParaTreeNode>>;
             // 获得某个选项的孩子个数-------可以删去,因为getOptionChilds可以获得孩子节点列表，从而获得个数
@@ -77,6 +83,18 @@ namespace solar
             void makeChoice(const QString& option);
             // 返回现在选中的选项的序号
             auto getCurrentOptionId() -> qsizetype;
+
+
+            //-------------------用于测试-----------------------
+            // 输出当前选项及选中的孩子列表
+            void printCurrentChild();
+            // 输出所有option对应的孩子列表
+            void printAllOptionChild();
+            // 输出某个option对应的孩子列表
+            void printOptionChild();
+            // 输出信息，包括父节点,孩子节点
+            void printInfo();
+
 
         private:
             QSharedPointer<ParaTreeNode> parent_node;

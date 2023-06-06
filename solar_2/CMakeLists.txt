@@ -87,58 +87,9 @@ qt_standard_project_setup()
 # file(GLOB_RECURSE native_srcs source/*.cpp source/*.h)
 file(GLOB_RECURSE native_srcs source/*.cpp source/*.h)
 qt_add_executable(appsolar_2
-
     qml.qrc
-
     src/main.cpp
-
     ${native_srcs}
-
-    # source/utils/Vec3.h
-    # source/utils/Vec3.cpp
-    # source/utils/Vec2.h
-    # source/utils/Vec2.cpp
-    # source/utils/Utils.h
-
-    # include/Para.h src/Para.cpp
-    # include/TopoTreeNode.h src/TopoTreeNode.cpp
-    # include/TopoTreeModel.h src/TopoTreeModel.cpp
-    # include/TopoTreeViewController.h src/TopoTreeViewController.cpp
-
-    # include/ParaTreeNode.h src/ParaTreeNode.cpp
-    # include/ParaTreeModel.h src/ParaTreeModel.cpp
-    # include/ParaTreeViewController.h src/ParaTreeViewController.cpp
-
-    # include/Scene.h src/Scene.cpp
-
-    # include/Grid.h src/Grid.cpp
-
-    # include/SunShape.h  src/SunShape.cpp
-    # include/SunPosition.h   src/SunPosition.cpp
-    # include/Attenuation.h   src/Attenuation.cpp
-    # include/Rotation.h  src/Rotation.cpp
-    # include/Geometry.h   src/Geometry.cpp
-    # include/Profile.h src/Profile.cpp
-    # include/Material.h  src/Material.cpp
-    # #include/MaterialRT.h    src/MaterialRT.cpp
-
-    # #include/Ray.h src/Ray.cpp
-    # include/SlopeError.h src/SlopeError.cpp
-
-    # source/topology/tracker/Armature.h
-    # source/topology/tracker/Armature.cpp
-    # source/topology/tracker/OneAxisArmature.h
-    # source/topology/tracker/OneAxisArmature.cpp
-    # source/topology/tracker/TwoAxisArmature.h
-    # source/topology/tracker/TwoAxisArmature.cpp
-    # source/topology/tracker/TwoAxisWithDrivesArmature.h
-    # source/topology/tracker/TwoAxisWithDrivesArmature.cpp
-
-    # include/Target.h src/Target.cpp
-    # #include/HeatTubePlane.h src/HeatTubePlane.cpp
-    # include/HeatTubePaneReceiver.h src/HeatTubePaneReceiver.cpp
-
-    # include/Tracker.h  src/Tracker.cpp
 )
 
 qt_add_qml_module(appsolar_2
@@ -152,6 +103,7 @@ qt_add_qml_module(appsolar_2
     QML_FILES RayTracingWindow.qml
     QML_FILES AnalyticFunctionWindow.qml
     QML_FILES DataVisualizationWindow.qml
+    QML_FILES zqml/RayTracingWindowParaRect.qml
 )
 
 set_target_properties(appsolar_2 PROPERTIES

@@ -1,6 +1,6 @@
 
 #include "tree/TopoTreeNode.h"
-#include <qtypes.h>
+//#include <qtypes.h>
 
 namespace solar
 {
@@ -37,6 +37,7 @@ namespace solar
     {
         child->setParent(sharedFromThis());
         child_nodes.append(child);
+        // para_tree_model = QSharedPointer<ParaTreeModel>(new ParaTreeModel)
     }
     // 删去该节点的所有孩子
     void TopoTreeNode::deleteAllChild()
@@ -100,10 +101,10 @@ namespace solar
         node_datas[column] = data;
     }
 
-    auto TopoTreeNode::getParaTreeId(const QSharedPointer<ParaTreeViewController>& para_tree_control) -> qsizetype
-    {
-        return para_tree_control->getParaTreeModelId(para_tree_model);
-    }
+    // auto TopoTreeNode::getParaTreeId(const QSharedPointer<ParaTreeViewController>& para_tree_control) -> qsizetype
+    // {
+    //     return para_tree_control->getParaTreeModelId(para_tree_model);
+    // }
     auto TopoTreeNode::getParaModelType() const -> int // 返回的是TreeModelType的枚举
     {
         QVariant type = data(1);
@@ -118,6 +119,17 @@ namespace solar
             cnt += child->getOffspringCount();
         }
         return cnt;
+    }
+
+    auto TopoTreeNode::getParaTreeModel() -> QSharedPointer<ParaTreeModel> 
+    {
+        //qDebug()<<"TopoTreeNode::getParaTreeModel para_tree_model = "<<para_tree_model;
+        return para_tree_model;
+    }
+
+    void TopoTreeNode::setParaTreeModel(QSharedPointer<ParaTreeModel> para_tree_model)
+    {
+        this->para_tree_model = para_tree_model;
     }
 
 } // namespace solar

@@ -24,11 +24,23 @@ namespace solar
             Rotation(const Vec3& axis = Vec3(1, 0, 0), double angle = 0)
                 : axis_(axis), angle_(angle)
             {
+                qDebug()<<"====================use rotation default construct==========";
+            }
+            Rotation(double a, double b, double c, double d)
+            {
+                Rotation(Vec3(a,b,c),d);
             }
 
             void setPara(const std::string& property_type, const QVariant& value);
             auto getPara(const std::string& property_type) -> QVariant;
             void testPrint() const;
+
+            // 转化为string，前三个表示axis，最后一个数表示angle
+            auto rotation2String() ->std::string
+            {
+                return axis_.vec32String() +","+ double2String(angle_);
+            }
+
 #include <utils/class_name.inc>
 
         private:
@@ -37,5 +49,7 @@ namespace solar
             BOOST_DESCRIBE_CLASS(solar::Rotation, (), (), (), (axis_, angle_))
     };
 } // namespace solar
+
+Q_DECLARE_METATYPE(solar::Rotation)
 
 #endif // ROTATION_H
