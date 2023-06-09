@@ -36,10 +36,7 @@ namespace solar
             void testPrint() const;
 
             // 转化为string，前三个表示axis，最后一个数表示angle
-            auto rotation2String() ->std::string
-            {
-                return axis_.vec32String() +","+ double2String(angle_);
-            }
+            [[nodiscard]] auto toString() const ->std::string;
 
 #include <utils/class_name.inc>
 

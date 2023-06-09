@@ -6,12 +6,12 @@ namespace solar
     class CustomAttenuation : public Attenuation
     {
         public:
-            CustomAttenuation() : type_(kAttenuationCustom) {}
+            CustomAttenuation() = default;
 
             [[nodiscard]] auto getType() const -> AttenuationType override { return type_; }
             void testPrint() const override { qDebug() << "\t CustomAttenuation"; }
 
         private:
-            AttenuationType type_;
+            AttenuationType type_ = kAttenuationCustom;
     };
 } // namespace solar

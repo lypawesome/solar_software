@@ -1,11 +1,12 @@
 
 #include "utils/Utils.h"
+#include <utils/Vec2.h>
+#include <utils/Format.h>
 
-namespace solar{
-
-    auto Vec2::vec2ToString() -> std::string
+namespace solar
+{
+    auto Vec2::toString() const -> std::string
     {
-        return double2String(x()) + "," + double2String(y());
+        return ::solar::format("{}, {}", this->e[0], this->e[1]);
     }
-}
-
+} // namespace solar

@@ -20,6 +20,7 @@ namespace solar
 
         kGeometryCylinder,
         kGeometryMultiPanelComprisedOfHeatTube,
+        kGeometryRectangle3D,
     };
 
     class Geometry

@@ -1,6 +1,6 @@
 
 #include "tree/TopoTreeViewController.h"
-//#include <qtypes.h>
+#include <tree/ParaTreeViewController.h>
 
 namespace solar
 {

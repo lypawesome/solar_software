@@ -11,8 +11,8 @@ int Receiver::receiver_cnt_ = 0;
 solar::Receiver::Receiver()
 {
     id_ = -1;
-    geometry_ = std::shared_ptr<Geometry>(new Rectangle());
-    material_ = std::shared_ptr<Material>(new Absorb());
+    geometry_ = std::make_shared<Rectangle>();
+    material_ = std::make_shared<Absorb>();
 }
 
 void solar::Receiver::setPara(const std::string& property_type, const QVariant& value)

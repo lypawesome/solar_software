@@ -1,4 +1,5 @@
 #include "scene/Heliostat.h"
+#include <memory>
 #include <utils/ParaUtils.h>
 #include "topology/geometry/Rectangle.h"
 #include "topology/geometry/Geometry.h"
@@ -13,8 +14,8 @@ int Heliostat::heliostat_cnt_ = 0;  //类的静态成员变量需要在类外分
 solar::Heliostat::Heliostat()
 {
     id_ = -1;
-    geometry_ = std::shared_ptr<Geometry>(new Rectangle);
-    material_ = std::shared_ptr<Material>(new Refract);
+    geometry_ = std::make_shared<Rectangle>();
+    material_ = std::make_shared<Refract>();
 }
 
 void solar::Heliostat::setPara(const std::string& property_type, const QVariant& value)

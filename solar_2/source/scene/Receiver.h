@@ -6,6 +6,8 @@
 
 #include <boost/describe.hpp>
 
+#include <cstdlib>
+
 namespace solar
 {
     class Material;
@@ -23,7 +25,7 @@ namespace solar
 #include <utils/class_name.inc>
             static int receiver_cnt_;
         private:
-            int id_ ;
+            std::uint64_t id_ ;
             std::shared_ptr<Material> material_;
             std::shared_ptr<Geometry> geometry_;
             BOOST_DESCRIBE_CLASS(Receiver, (Para), (), (), (id_,material_, geometry_))

@@ -6,7 +6,7 @@ namespace solar
     class ExponentialAttenuation : public Attenuation
     {
         public:
-            ExponentialAttenuation(double beta = 0.11) : beta_(beta), type_(kAttenuationExponential)
+            ExponentialAttenuation(double beta = 0.11) : beta_(beta)
             {
             }
 
@@ -20,6 +20,6 @@ namespace solar
 
         private:
             double beta_;
-            AttenuationType type_;
+            AttenuationType type_ = kAttenuationExponential;
     };
 } // namespace solar

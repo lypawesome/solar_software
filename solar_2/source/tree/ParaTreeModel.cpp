@@ -10,6 +10,7 @@
 #include "world/air/CustomAttenuation.h"
 #include "world/air/ExponentialAttenuation.h"
 #include "utils/Grid.h"
+#include <utils/Vec2.h>
 
 
 namespace solar
@@ -289,14 +290,14 @@ namespace solar
     {
         // position
         QVariant position = camera->getPara(toMemberName("position"));
-        createNode(root_node, "position", QString::fromStdString(position.value<Vec3>().vec32String()), EDITABLE);
+        createNode(root_node, "position", QString::fromStdString(position.value<Vec3>().toString()), EDITABLE);
         qDebug() << "-----------Camera position="<<position;
 
         // rotation
         QVariant rotation = camera->getPara(toMemberName("rotation"));
         // QVariant axis = rotation.getPara(toMemberName("axis"));
         // QVariant angle = rotation.getPara(toMemberName("angle"));       // Vec3的如何设置？？？？
-        createNode(root_node,"rotation",QString::fromStdString(rotation.value<Rotation>().rotation2String()), EDITABLE);
+        createNode(root_node,"rotation",QString::fromStdString(rotation.value<Rotation>().toString()), EDITABLE);
 
         // perspective
         QVariant perspective = camera->getPara(toMemberName("perspective"));
@@ -318,19 +319,19 @@ namespace solar
 
         // steps
         QVariant steps = grid_ptr->getPara(toMemberName("steps"));
-        createNode(grid_node, "steps",QString::fromStdString(steps.value<Vec3>().vec32String()), EDITABLE);
+        createNode(grid_node, "steps",QString::fromStdString(steps.value<Vec3>().toString()), EDITABLE);
         
         // divisions
         QVariant divisions = grid_ptr->getPara(toMemberName("divisions"));
-        createNode(grid_node, "divisions",QString::fromStdString(divisions.value<Vec3>().vec32String()), EDITABLE);
+        createNode(grid_node, "divisions",QString::fromStdString(divisions.value<Vec3>().toString()), EDITABLE);
         
         // min
         QVariant min = grid_ptr->getPara(toMemberName("min"));
-        createNode(grid_node, "min",QString::fromStdString(min.value<Vec3>().vec32String()), EDITABLE);
+        createNode(grid_node, "min",QString::fromStdString(min.value<Vec3>().toString()), EDITABLE);
         
         // max
         QVariant max = grid_ptr->getPara(toMemberName("max"));
-        createNode(grid_node, "max",QString::fromStdString(max.value<Vec3>().vec32String()), EDITABLE);
+        createNode(grid_node, "max",QString::fromStdString(max.value<Vec3>().toString()), EDITABLE);
         
         // file
         QVariant file = QString(grid_ptr->getPara(toMemberName("file")).value<std::string>().c_str());
@@ -342,15 +343,15 @@ namespace solar
     {
         // translation
         QVariant translation = node->getPara(toMemberName("translation"));
-        createNode(root_node, "translation",QString::fromStdString(translation.value<Vec3>().vec32String()), EDITABLE);
+        createNode(root_node, "translation",QString::fromStdString(translation.value<Vec3>().toString()), EDITABLE);
 
         // rotation
         QVariant rotation = node->getPara(toMemberName("rotation"));
-        createNode(root_node, "rotation",QString::fromStdString(rotation.value<Rotation>().rotation2String()), EDITABLE);
+        createNode(root_node, "rotation",QString::fromStdString(rotation.value<Rotation>().toString()), EDITABLE);
 
         //scale
         QVariant scale = node->getPara(toMemberName("scale"));
-        createNode(root_node, "scale",QString::fromStdString(scale.value<Vec3>().vec32String()), EDITABLE);
+        createNode(root_node, "scale",QString::fromStdString(scale.value<Vec3>().toString()), EDITABLE);
 
     }
 
@@ -391,11 +392,11 @@ namespace solar
         if(current_geometry_type == kGeometryRectangle)
         {
             QVariant size = geometry_ptr->getPara(toMemberName("size"));
-            createNode(geometry_node,"size", QString::fromStdString(size.value<Vec2>().vec2ToString()),EDITABLE,true,"Rectangle");
+            createNode(geometry_node,"size", QString::fromStdString(size.value<Vec2>().toString()),EDITABLE,true,"Rectangle");
         }
         else{
             Vec2 size(1,1);
-            createNode(geometry_node,"size", QString::fromStdString(size.vec2ToString()),EDITABLE,false,"Rectangle");
+            createNode(geometry_node,"size", QString::fromStdString(size.toString()),EDITABLE,false,"Rectangle");
         }
 
         // option--Parabolic
@@ -407,7 +408,7 @@ namespace solar
             createNode(geometry_node,"b", QString::fromStdString(std::to_string(b)),EDITABLE,true,"Parabolic");
 
             Vec2 size = geometry_ptr->getPara(toMemberName("size")).value<Vec2>();
-            createNode(geometry_node,"size", QString::fromStdString(size.vec2ToString()),EDITABLE,true,"Parabolic");
+            createNode(geometry_node,"size", QString::fromStdString(size.toString()),EDITABLE,true,"Parabolic");
         }
         else{
             double a = 1;
@@ -416,7 +417,7 @@ namespace solar
             createNode(geometry_node,"b", QString::fromStdString(std::to_string(b)),EDITABLE,false,"Parabolic");
 
             Vec2 size(1,1);
-            createNode(geometry_node,"size", QString::fromStdString(size.vec2ToString()),EDITABLE,false,"Parabolic");
+            createNode(geometry_node,"size", QString::fromStdString(size.toString()),EDITABLE,false,"Parabolic");
         }
 
         // option--BSpline
@@ -599,11 +600,11 @@ namespace solar
         if(current_geometry_type == kGeometryRectangle)
         {
             QVariant size = geometry_ptr->getPara(toMemberName("size"));
-            createNode(geometry_node,"size", QString::fromStdString(size.value<Vec2>().vec2ToString()),EDITABLE,true,"Rectangle");
+            createNode(geometry_node,"size", QString::fromStdString(size.value<Vec2>().toString()),EDITABLE,true,"Rectangle");
         }
         else{
             Vec2 size(1,1);
-            createNode(geometry_node,"size", QString::fromStdString(size.vec2ToString()),EDITABLE,false,"Rectangle");
+            createNode(geometry_node,"size", QString::fromStdString(size.toString()),EDITABLE,false,"Rectangle");
         }
 
         // option--Cylinder

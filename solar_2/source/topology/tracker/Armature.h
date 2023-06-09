@@ -8,7 +8,6 @@
 #include "utils/Vec2.h"
 #include "utils/Vec3.h"
 
-
 namespace solar
 {
 
@@ -22,6 +21,7 @@ namespace solar
     class Armature
     {
         public:
+            virtual ~Armature() = default;
             Armature();
             virtual void setPara(const std::string& property_type, const QVariant& value) = 0;
             virtual auto getPara(const std::string& property_type) -> QVariant = 0;

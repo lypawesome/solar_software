@@ -14,7 +14,6 @@
 #include <QVariant>
 
 #include "tree/ParaTreeModel.h"
-#include "tree/ParaTreeViewController.h"
 
 namespace solar
 {

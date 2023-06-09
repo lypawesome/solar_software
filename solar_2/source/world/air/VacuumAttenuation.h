@@ -7,12 +7,12 @@ namespace solar
     class VacuumAttenuation : public Attenuation
     {
         public:
-            VacuumAttenuation() : type_(kAttenuationVacuum) {}
+            VacuumAttenuation() = default;
 
             [[nodiscard]] auto getType() const -> AttenuationType override { return type_; }
             void testPrint() const override { qDebug() << "\t VacuumAttenuation"; }
 
         private:
-            AttenuationType type_;
+            AttenuationType type_ = kAttenuationVacuum;
     };
 } // namespace solar

@@ -12,7 +12,7 @@
 
 namespace solar
 {
-
+    class ParaTreeViewController;
     class TopoTreeViewController : public QObject
     {
             Q_OBJECT
