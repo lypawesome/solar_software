@@ -3,6 +3,7 @@
 #include <utils/Format.h>
 #include <utils/ParaUtils.h>
 
+#include <boost/algorithm/string.hpp>
 
 #include <QDebug>
 
@@ -31,6 +32,14 @@ namespace solar
     auto Rotation::toString() const -> std::string
     {
         return ::solar::format("{}, {}", axis_.toString(), angle_);
+    }
+
+    auto Rotation::fromString(const std::string& input) -> Rotation
+    {
+        std::vector<std::string> split_strings;
+        boost::split(split_strings, input, boost::is_any_of(" ,"), boost::token_compress_on);
+        return {std::stod(split_strings[0]), std::stod(split_strings[1]),
+                std::stod(split_strings[2]), std::stod(split_strings[3])};
     }
 
 } // namespace solar

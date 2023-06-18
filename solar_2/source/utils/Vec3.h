@@ -55,6 +55,7 @@ namespace solar
 
             // 返回string的样式
             [[nodiscard]] auto toString() const -> std::string;
+            static auto fromString(const std::string& input) -> Vec3;
 
         private:
             vcl::Vec4d internal_vector{};

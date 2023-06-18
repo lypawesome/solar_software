@@ -2,9 +2,11 @@
 
 #include "utils/Vec3.h"
 #include "utils/Utils.h"
+#include <utils/Format.h>
 
 #include <cmath>
-#include <utils/Format.h>
+
+#include <boost/algorithm/string.hpp>
 
 namespace solar
 {
@@ -13,6 +15,14 @@ namespace solar
     {
         auto data = this->data();
         return ::solar::format("{}, {}, {}", data[0], data[1], data[2]);
+    }
+
+    auto Vec3::fromString(const std::string& input) -> Vec3
+    {
+        std::vector<std::string> split_strings;
+        boost::split(split_strings, input, boost::is_any_of(" ,"), boost::token_compress_on);
+        return {std::stod(split_strings[0]), std::stod(split_strings[1]),
+                std::stod(split_strings[2])};
     }
 
     [[nodiscard]] PURE_FUNCTION auto Vec3::x() const -> double { return this->internal_vector[0]; }
