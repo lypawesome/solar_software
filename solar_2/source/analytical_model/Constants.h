@@ -1,8 +1,5 @@
 #pragma once
 
-#include <concepts>
-#include <type_traits>
-
 namespace solar
 {
     enum class ProjectionType
@@ -24,5 +21,11 @@ namespace solar
         kUNIZAR,
         kCauchy,
         kHuang,
+    };
+
+    enum class ModelType
+    {
+        kConvolution,
+        kSimplified,
     };
 } // namespace solar

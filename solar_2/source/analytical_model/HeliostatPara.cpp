@@ -12,3 +12,5 @@ auto solar::HeliostatPara::getPara(const std::string& property_type) -> QVariant
 {
     return ::solar::getPara(property_type, this);
 }
+
+void solar::HeliostatPara::testPrint() const {}

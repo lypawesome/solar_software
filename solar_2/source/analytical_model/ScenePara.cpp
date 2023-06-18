@@ -12,3 +12,5 @@ auto solar::ScenePara::getPara(const std::string& property_type) -> QVariant
 {
     return ::solar::getPara(property_type, this);
 }
+
+void solar::ScenePara::testPrint() const {}

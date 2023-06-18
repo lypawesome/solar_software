@@ -12,3 +12,5 @@ auto solar::SimplifiedPara::getPara(const std::string& property_type) -> QVarian
 {
     return ::solar::getPara(property_type, this);
 }
+
+void solar::SimplifiedPara::testPrint() const {}

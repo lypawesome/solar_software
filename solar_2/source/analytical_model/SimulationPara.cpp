@@ -1,4 +1,5 @@
 #include <analytical_model/SimulationPara.h>
+#include <string>
 #include <utils/ParaUtils.h>
 
 using namespace solar;
@@ -12,3 +13,5 @@ auto solar::SimulationPara::getPara(const std::string& property_type) -> QVarian
 {
     return ::solar::getPara(property_type, this);
 }
+
+void solar::SimulationPara::testPrint() const {}

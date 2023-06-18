@@ -3,10 +3,12 @@
 #include <boost/describe.hpp>
 
 #include "utils/Para.h"
+#include "utils/Vec2.h"
 
 namespace solar
 {
     /// \brief 场景参数-各定日镜单独设置的部分（镜面为玻璃的定日镜）
+    /// 若无特殊说明，Vec类型的分量顺序为(x, y, z)
     class HeliostatWithGlassPara : public Para
     {
         public:
@@ -20,16 +22,17 @@ namespace solar
             // Huang-model specific
 
             double refractivity_{}; // 折射率
-            double sigma_glass_refract_x_1_{}; // 玻璃表面x方向上第一次折射的光学误差（mrad）
-            double sigma_glass_refract_y_1_{}; // 玻璃表面y方向上第一次折射的光学误差（mrad）
-            double sigma_glass_reflect_x_{}; // 玻璃底面x方向上反射的光学误差（mrad）
-            double sigma_glass_reflect_y_{}; // 玻璃底面y方向上反射的光学误差（mrad）
-            double sigma_glass_refract_x_2_{}; // 玻璃表面x方向上第二次折射的光学误差（mrad）
-            double sigma_glass_refract_y_2_{}; // 玻璃表面y方向上第二次折射的光学误差（mrad）
-            double sigma_glass_down_slope_error_{}; // 玻璃底面上的微表面法向扰动（mrad）
+            Vec2 sigma_glass_down_slope_error{}; // 玻璃底面上的微表面法向扰动（mrad）
+            
+            // Auto-generated Part
+
+            Vec2 sigma_glass_refract_1_{}; // 玻璃表面上第一次折射的光学误差（mrad）
+            Vec2 sigma_glass_reflect_{}; // 玻璃底面上反射的光学误差（mrad）
+            Vec2 sigma_glass_refract_2_{}; // 玻璃表面上第二次折射的光学误差（mrad）
+            
             BOOST_DESCRIBE_CLASS(HeliostatWithGlassPara, (Para), (), (),
-                                 (refractivity_, sigma_glass_refract_x_1_, sigma_glass_refract_y_1_,
-                                  sigma_glass_reflect_x_, sigma_glass_reflect_y_,
-                                  sigma_glass_refract_x_2_, sigma_glass_refract_y_2_))
+                                 (refractivity_, sigma_glass_refract_1_,
+                                  sigma_glass_reflect_,
+                                  sigma_glass_refract_2_))
     };
 } // namespace solar

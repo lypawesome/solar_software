@@ -3,6 +3,7 @@
 #include <boost/describe.hpp>
 
 #include "utils/Para.h"
+#include "utils/Vec2.h"
 
 #include <cstdint>
 #include <memory>
@@ -13,6 +14,7 @@ namespace solar
     class HeliostatWithGlassPara;
 
     /// \brief 场景参数-各定日镜单独设置的部分
+    /// 若无特殊说明，Vec类型的分量顺序为(x, y, z)
     class HeliostatPara : public Para
     {
         public:
@@ -30,7 +32,7 @@ namespace solar
             double total_area_{};          // 定日镜总面积（m^2）
             double reflectivity_{};        // 反射率
             double sigma_tracking_{};      // 跟踪误差（mrad）
-            double sigma_slope_error_{};   // 定日镜表面上的微表面法向扰动（mrad）
+            Vec2 sigma_slope_error_{};   // 定日镜表面上的微表面法向扰动（mrad）
             // 镜面为玻璃的定日镜的额外参数
             std::shared_ptr<HeliostatWithGlassPara> heliostat_glass_para_;
 

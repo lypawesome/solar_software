@@ -12,3 +12,5 @@ auto solar::ConvolutionPara::getPara(const std::string& property_type) -> QVaria
 {
     return ::solar::getPara(property_type, this);
 }
+
+void solar::ConvolutionPara::testPrint() const {}

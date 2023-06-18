@@ -12,3 +12,5 @@ auto solar::HeliostatWithGlassPara::getPara(const std::string& property_type) ->
 {
     return ::solar::getPara(property_type, this);
 }
+
+void solar::HeliostatWithGlassPara::testPrint() const {}
