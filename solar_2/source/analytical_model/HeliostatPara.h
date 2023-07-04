@@ -2,8 +2,10 @@
 
 #include <boost/describe.hpp>
 
-#include "utils/Para.h"
-#include "utils/Vec2.h"
+#include <utils/HasValue.h>
+#include <utils/Para.h>
+#include <utils/Vec2.h>
+
 
 #include <cstdint>
 #include <memory>
@@ -18,7 +20,7 @@ namespace solar
     class HeliostatPara : public Para
     {
         public:
-            HeliostatPara() = default;
+            HeliostatPara();
 
             void setPara(const std::string& property_type, const QVariant& value) override;
             [[nodiscard]] auto getPara(const std::string& property_type) -> QVariant override;
@@ -26,22 +28,22 @@ namespace solar
 #include <utils/class_name.inc>
 
         private:
-            std::uint64_t heliostat_id_{}; // 定日镜编号
-            std::uint64_t receiver_id_{};  // 接收器编号
-            double mirror_area_{};         // 镜面面积（m^2）
-            double total_area_{};          // 定日镜总面积（m^2）
-            double reflectivity_{};        // 反射率
-            double sigma_tracking_{};      // 跟踪误差（mrad）
-            Vec2 sigma_slope_error_{};   // 定日镜表面上的微表面法向扰动（mrad）
+            std::uint64_t heliostat_id_{};     // 定日镜编号
+            std::uint64_t receiver_id_{};      // 接收器编号
+            double mirror_area_ = kUndefined;  // 镜面面积（m^2）
+            double total_area_ = kUndefined;   // 定日镜总面积（m^2）
+            double reflectivity_ = kUndefined; // 反射率
+            Vec2 sigma_tracking_{};            // 跟踪误差（mrad）
+            Vec2 sigma_slope_error_{}; // 定日镜表面上的微表面法向扰动（mrad）
             // 镜面为玻璃的定日镜的额外参数
             std::shared_ptr<HeliostatWithGlassPara> heliostat_glass_para_;
 
             // Auto-generated Part
 
-            double air_attenuation_efficiency_{}; // 大气透射效率
-            double distance_to_focus_center_{};   // 定日镜中心与聚焦点距离（m）
-            double sigma_astigmatism_{};          // 散光误差（mrad）
-            double sigma_beam_quality_{};         // 光束质量误差（mard）
+            double air_attenuation_efficiency_ = kUndefined; // 大气透射效率
+            double distance_to_focus_center_ = kUndefined; // 定日镜中心与聚焦点距离（m）
+            double sigma_astigmatism_ = kUndefined;        // 散光误差（mrad）
+            double sigma_beam_quality_ = kUndefined;       // 光束质量误差（mard）
 
             BOOST_DESCRIBE_CLASS(HeliostatPara, (Para), (), (),
                                  (heliostat_id_, receiver_id_, mirror_area_, total_area_,

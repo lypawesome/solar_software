@@ -2,8 +2,9 @@
 
 #include <boost/describe.hpp>
 
-#include "utils/Para.h"
 #include <analytical_model/Constants.h>
+#include <utils/Para.h>
+
 
 #include <memory>
 
@@ -23,9 +24,9 @@ namespace solar
 
         private:
             ConvolutionModelType model_type_;
-            ProjectionType projection_type_;
             std::shared_ptr<ModelPara> model_para_;
 
-            BOOST_DESCRIBE_CLASS(ConvolutionPara, (Para), (), (), (model_type_, projection_type_, model_para_))
+            BOOST_DESCRIBE_CLASS(ConvolutionPara, (Para), (), (),
+                                 (model_type_, model_para_))
     };
 } // namespace solar

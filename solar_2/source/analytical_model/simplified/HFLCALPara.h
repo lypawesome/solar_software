@@ -3,6 +3,7 @@
 #include <boost/describe.hpp>
 
 #include <analytical_model/ModelPara.h>
+#include <utils/HasValue.h>
 
 namespace solar
 {
@@ -14,7 +15,7 @@ namespace solar
             [[nodiscard]] auto getPara(const std::string& property_type) -> std::any override;
 #include <utils/class_name.inc>
         private:
-            double sigma_; // 圆形高斯sigma
+            double sigma_ = kUndefined; // 圆形高斯sigma
             BOOST_DESCRIBE_CLASS(HFLCALPara, (ModelPara), (), (), (sigma_))
     };
 } // namespace solar

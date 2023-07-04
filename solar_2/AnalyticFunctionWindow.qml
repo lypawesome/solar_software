@@ -3,6 +3,8 @@ import QtQuick.Window
 import QtQuick.Controls
 import Qt.labs.qmlmodels
 
+import AnalyticFunctionEnums 1.0
+
 Window {
     id: analytic_function_window
     width: 640
@@ -47,6 +49,14 @@ Window {
             anchors.leftMargin: 20
             // font.pixelSize: 25
             validator: IntValidator{bottom: 1}
+            Component.onCompleted:
+            {
+                num_gpu_threads_textinput.text = analyticFunctionWindowAdapter.getCommonPara("num_gpu_threads_")
+            }
+            onTextChanged:
+            {
+                analyticFunctionWindowAdapter.setCommonPara("num_gpu_threads_", num_gpu_threads_textinput.text)
+            }
         }
 
         ComboBox
@@ -74,12 +84,16 @@ Window {
                 }
                 hoverEnabled: model_type_box.hoverEnabled
             }
+            Component.onCompleted: 
+            {
+                model_type_box.currentIndex = analyticFunctionWindowAdapter.getModelType()
+            }
 
             onCurrentIndexChanged:
             {
                 switch (currentIndex)
                 {
-                case 0:
+                case AnalyticFunctionEnums.Simplified:
                 {
                     detail_model_type_box.model = ["HFLCAL", "iHFLCAL", "bHFLCAL", "NEG"]
                     hflcal_based_tableview_boundry.visible = true
@@ -92,9 +106,12 @@ Window {
                     heliostat_with_glass_checkbox.visible = false
 
                     analytic_function_window.width = hflcal_based_tableview_boundry.width
+
+                    analyticFunctionWindowAdapter.setModelType(AnalyticFunctionEnums.Simplified)
+                    analyticFunctionWindowAdapter.setSimplifiedModelType(AnalyticFunctionEnums.HFLCAL)
                     break
                 }
-                case 1:
+                case AnalyticFunctionEnums.Convolution:
                 {
                     detail_model_type_box.model = ["UNIZAR", "iCauchy", "Huang"]
                     hflcal_based_tableview_boundry.visible = false
@@ -106,7 +123,10 @@ Window {
                     heliostat_with_glass_text.visible = false
                     heliostat_with_glass_checkbox.visible = false
 
-                    analytic_function_window.width = unizar_tableview_boundry.width
+                    analytic_function_window.width = Math.max(unizar_tableview_boundry.width, 550)
+
+                    analyticFunctionWindowAdapter.setModelType(AnalyticFunctionEnums.Convolution)
+                    analyticFunctionWindowAdapter.setConvolutionModelType(AnalyticFunctionEnums.UNIZAR)
                     break
                 }
                 }
@@ -144,6 +164,17 @@ Window {
             // font.pixelSize: 25
             // width: 170
             model:["HFLCAL", "iHFLCAL", "bHFLCAL", "NEG"]
+            Component.onCompleted: 
+            {
+                if (model_type_box.currentIndex == AnalyticFunctionEnums.Simplified)
+                {
+                    detail_model_type_box.currentIndex = analyticFunctionWindowAdapter.getSimplifiedModelType()
+                }
+                else
+                {
+                    detail_model_type_box.currentIndex = analyticFunctionWindowAdapter.getConvolutionModelType()
+                }
+            }
             delegate: ItemDelegate
             {
                 id: detail_model_type_box_delegate
@@ -161,6 +192,14 @@ Window {
             }
             onCurrentIndexChanged:
             {
+                if (model_type_box.currentIndex === AnalyticFunctionEnums.Simplified)
+                {
+                    analyticFunctionWindowAdapter.setSimplifiedModelType(currentIndex)
+                }
+                else
+                {
+                    analyticFunctionWindowAdapter.setConvolutionModelType(currentIndex)
+                }
                 if (model[currentIndex] === "UNIZAR")
                 {
                     hflcal_based_tableview_boundry.visible = false
@@ -172,7 +211,7 @@ Window {
                     heliostat_with_glass_text.visible = false
                     heliostat_with_glass_checkbox.visible = false
 
-                    analytic_function_window.width = unizar_tableview_boundry.width
+                    analytic_function_window.width = Math.max(unizar_tableview_boundry.width, 550)
                 }
                 if (model[currentIndex] === "Huang")
                 {
@@ -209,7 +248,7 @@ Window {
                     heliostat_with_glass_text.visible = false
                     heliostat_with_glass_checkbox.visible = false
 
-                    analytic_function_window.width = icauchy_tableview_boundry.width
+                    analytic_function_window.width = Math.max(icauchy_tableview_boundry.width, 550)
                 }
             }
         }
@@ -233,6 +272,14 @@ Window {
             anchors.leftMargin: 20
             // font.pixelSize: 25
             validator: DoubleValidator{bottom: 0.0}
+            Component.onCompleted:
+            {
+                dni_textinput.text = analyticFunctionWindowAdapter.getScenePara("DNI_")
+            }
+            onTextChanged:
+            {
+                analyticFunctionWindowAdapter.setScenePara("DNI_", dni_textinput.text)
+            }
         }
         Text
         {
@@ -254,6 +301,14 @@ Window {
             anchors.leftMargin: 20
             // font.pixelSize: 25
             validator: DoubleValidator{bottom: 0.0}
+            Component.onCompleted:
+            {
+                csr_textinput.text = analyticFunctionWindowAdapter.getScenePara("CSR_")
+            }
+            onTextChanged:
+            {
+                analyticFunctionWindowAdapter.setScenePara("CSR_", dni_textinput.text)
+            }
         }
         Text
         {
@@ -284,6 +339,16 @@ Window {
             anchors.leftMargin: 20
             // font.pixelSize: 25
             validator: DoubleValidator{bottom: 0.0}
+            Component.onCompleted:
+            {
+                var vec2_text = analyticFunctionWindowAdapter.getSimulationPara("receiver_pixel_size_")
+                var vec2_text_split = vec2_text.split(/,\s*/)
+                receiver_partition_x_textinput.text = vec2_text_split[0]
+            }
+            onTextChanged:
+            {
+                analyticFunctionWindowAdapter.setSimulationPara("receiver_pixel_size_", receiver_partition_x_textinput.text + ", " + receiver_partition_y_textinput.text)
+            }
         }
         Text
         {
@@ -305,6 +370,16 @@ Window {
             anchors.leftMargin: 20
             // font.pixelSize: 25
             validator: DoubleValidator{bottom: 0.0}
+            Component.onCompleted:
+            {
+                var vec2_text = analyticFunctionWindowAdapter.getSimulationPara("receiver_pixel_size_")
+                var vec2_text_split = vec2_text.split(/,\s*/)
+                receiver_partition_y_textinput.text = vec2_text_split[1]
+            }
+            onTextChanged:
+            {
+                analyticFunctionWindowAdapter.setSimulationPara("receiver_pixel_size_", receiver_partition_x_textinput.text + ", " + receiver_partition_y_textinput.text)
+            }
         }
         Text
         {
@@ -325,6 +400,14 @@ Window {
             // font.pixelSize: 25
             width: 100
             model: ["Parallel", "Gnomonic"]
+            Component.onCompleted: 
+            {
+                projection_type_box.currentIndex = analyticFunctionWindowAdapter.getProjectionType()
+            }
+            onCurrentIndexChanged:
+            {
+                analyticFunctionWindowAdapter.setProjectionType(projection_type_box.currentIndex)
+            }
             delegate: ItemDelegate
             {
                 id: projection_type_box_delegate
@@ -358,6 +441,17 @@ Window {
             anchors.top: receiver_partition_x_textinput.bottom
             anchors.topMargin: 20 + projection_type_box.height / 6
             anchors.left: heliostat_with_glass_text.right
+            Component.onCompleted:
+            {
+                if (analyticFunctionWindowAdapter.getHeliostatType() === AnalyticFunctionEnums.WithGlass)
+                {
+                    heliostat_with_glass_checkbox.checked = true
+                }
+                else
+                {
+                    heliostat_with_glass_checkbox.checked = false
+                }
+            }
             onCheckedChanged:
             {
                 if (detail_model_type_box.model[detail_model_type_box.currentIndex] === "Huang")
@@ -368,6 +462,8 @@ Window {
                         huang_with_glass_tableview_boundry.visible = true
 
                         analytic_function_window.width = huang_with_glass_tableview_boundry.width
+
+                        analyticFunctionWindowAdapter.setHeliostatType(AnalyticFunctionEnums.WithGlass)
                     }
                     else
                     {
@@ -375,6 +471,8 @@ Window {
                         huang_with_glass_tableview_boundry.visible = false
 
                         analytic_function_window.width = huang_tableview_boundry.width
+
+                        analyticFunctionWindowAdapter.setHeliostatType(AnalyticFunctionEnums.WithoutGlass)
                     }
                 }
             }
@@ -431,6 +529,7 @@ Window {
 
             TableView
             {
+                id: hflcal_based_tableview
                 anchors.fill: parent
                 anchors.top: parent.top
                 anchors.topMargin: 46
@@ -439,11 +538,12 @@ Window {
                 columnSpacing: 1
                 rowSpacing: 1
                 boundsBehavior: Flickable.StopAtBounds
+                boundsMovement: Flickable.StopAtBounds
                 ScrollBar.vertical: ScrollBar
                 {
                     anchors.right:parent.right
                     anchors.rightMargin: 0
-                    visible: tableModel.rowCount > 6
+                    visible: TableModel.rowCount > 6
                     background: Rectangle
                     {
                         color:"#666666"
@@ -468,23 +568,6 @@ Window {
                     TableModelColumn{display: "reflectivity"}
                     TableModelColumn{display: "sigma_tracking"}
                     TableModelColumn{display: "sigma_slope_error"}
-
-                    rows: [
-                        {
-                            heliostat_id: "0",
-                            receiver_id: "0",
-                            mirror_area: "100",
-                            reflectivity: "0.88",
-                            sigma_tracking: "0.0",
-                            sigma_slope_error: "0.0",
-                        },
-                        {
-                            heliostat_id: "1"
-                        },
-                        {
-                            heliostat_id: "2"
-                        }
-                    ]
                 }
                 delegate: Rectangle
                 {
@@ -493,12 +576,71 @@ Window {
                     implicitHeight: 25
                     border.width: 1
                     border.color: "#efefef"
-
-                    TextEdit
+                    MouseArea
                     {
-                        text: display
-                        readOnly: false
-                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered:
+                        {
+                        }
+                        onExited:
+                        {
+                            hflcal_based_tableview.updateRow(row)
+                            unizar_tableview.updateRow(row)
+                            huang_tableview.updateRow(row)
+                            huang_with_glass_tableview.updateRow(row)
+                            icauchy_tableview.updateRow(row)
+                        }
+                        TextEdit
+                        {
+                            text: display
+                            readOnly: column <= 1 ? true : false
+                            anchors.centerIn: parent
+                            onTextChanged:
+                            {
+                                var current_heliostat_id = hflcal_based_tableview.model.rows[row].heliostat_id
+                                switch (column)
+                                {
+                                    case 2: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "mirror_area_", text); break;
+                                    case 3: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "reflectivity_", text); break;
+                                    case 4: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_tracking_", text); break;
+                                    case 5: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_slope_error_", text); break;
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+                function updateRow(row)
+                {
+                    var current_heliostat_id = hflcal_based_tableview.model.rows[row].heliostat_id
+                    model.setRow(row, {
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            sigma_tracking: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_tracking_"),
+                            sigma_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
+                        })
+                }
+                Component.onCompleted:
+                {
+                    var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
+                    var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
+                    var i = 0;
+                    for (i = 0; i < heliostat_index_list.length; i++)
+                    {
+                        var current_heliostat_id = heliostat_index_list[i]
+                        model.appendRow({
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            sigma_tracking: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_tracking_"),
+                            sigma_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
+                        })
                     }
                 }
             }
@@ -544,6 +686,7 @@ Window {
 
             TableView
             {
+                id: unizar_tableview
                 anchors.fill: parent
                 anchors.top: parent.top
                 anchors.topMargin: 46
@@ -552,11 +695,12 @@ Window {
                 columnSpacing: 1
                 rowSpacing: 1
                 boundsBehavior: Flickable.StopAtBounds
+                boundsMovement: Flickable.StopAtBounds
                 ScrollBar.vertical: ScrollBar
                 {
                     anchors.right:parent.right
                     anchors.rightMargin: 0
-                    visible: tableModel.rowCount > 6
+                    visible: TableModel.rowCount > 6
                     background: Rectangle
                     {
                         color:"#666666"
@@ -579,21 +723,6 @@ Window {
                     TableModelColumn{display: "receiver_id"}
                     TableModelColumn{display: "mirror_area"}
                     TableModelColumn{display: "total_area"}
-
-                    rows: [
-                        {
-                            heliostat_id: "0",
-                            receiver_id: "0",
-                            mirror_area: "100",
-                            total_area: "100",
-                        },
-                        {
-                            heliostat_id: "1"
-                        },
-                        {
-                            heliostat_id: "2"
-                        }
-                    ]
                 }
                 delegate: Rectangle
                 {
@@ -602,12 +731,64 @@ Window {
                     implicitHeight: 25
                     border.width: 1
                     border.color: "#efefef"
-
-                    TextEdit
+                    MouseArea
                     {
-                        text: display
-                        readOnly: false
-                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered:
+                        {
+                        }
+                        onExited:
+                        {
+                            hflcal_based_tableview.updateRow(row)
+                            unizar_tableview.updateRow(row)
+                            huang_tableview.updateRow(row)
+                            huang_with_glass_tableview.updateRow(row)
+                            icauchy_tableview.updateRow(row)
+                        }
+                        TextEdit
+                        {
+                            text: display
+                            readOnly: column <= 1 ? true : false
+                            anchors.centerIn: parent
+                            onTextChanged:
+                            {
+                                var current_heliostat_id = unizar_tableview.model.rows[row].heliostat_id
+                                switch (column)
+                                {
+                                    case 2: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "mirror_area_", text); break;
+                                    case 3: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "total_area_", text); break;
+                                }
+                            }
+                        }
+                    }
+                }
+                function updateRow(row)
+                {
+                    var current_heliostat_id = unizar_tableview.model.rows[row].heliostat_id
+                    model.setRow(row, {
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            total_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "total_area_"),
+                        })
+                }
+                Component.onCompleted:
+                {
+                    var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
+                    var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
+                    var i = 0;
+                    for (i = 0; i < heliostat_index_list.length; i++)
+                    {
+                        var current_heliostat_id = heliostat_index_list[i]
+                        model.appendRow({
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            total_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "total_area_"),
+                        })
                     }
                 }
             }
@@ -653,6 +834,7 @@ Window {
 
             TableView
             {
+                id: huang_tableview
                 anchors.fill: parent
                 anchors.top: parent.top
                 anchors.topMargin: 46
@@ -661,11 +843,12 @@ Window {
                 columnSpacing: 1
                 rowSpacing: 1
                 boundsBehavior: Flickable.StopAtBounds
+                boundsMovement: Flickable.StopAtBounds
                 ScrollBar.vertical: ScrollBar
                 {
                     anchors.right:parent.right
                     anchors.rightMargin: 0
-                    visible: tableModel.rowCount > 6
+                    visible: TableModel.rowCount > 6
                     background: Rectangle
                     {
                         color:"#666666"
@@ -690,23 +873,6 @@ Window {
                     TableModelColumn{display: "reflectivity"}
                     TableModelColumn{display: "sigma_tracking"}
                     TableModelColumn{display: "sigma_slope_error"}
-
-                    rows: [
-                        {
-                            heliostat_id: "0",
-                            receiver_id: "1",
-                            mirror_area: "100",
-                            reflectivity: "0.88",
-                            sigma_tracking: "0.0",
-                            sigma_slope_error: "0.0"
-                        },
-                        {
-                            heliostat_id: "1"
-                        },
-                        {
-                            heliostat_id: "2"
-                        }
-                    ]
                 }
                 delegate: Rectangle
                 {
@@ -715,12 +881,70 @@ Window {
                     implicitHeight: 25
                     border.width: 1
                     border.color: "#efefef"
-
-                    TextEdit
+                    MouseArea
                     {
-                        text: display
-                        readOnly: false
-                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered:
+                        {
+                        }
+                        onExited:
+                        {
+                            hflcal_based_tableview.updateRow(row)
+                            unizar_tableview.updateRow(row)
+                            huang_tableview.updateRow(row)
+                            huang_with_glass_tableview.updateRow(row)
+                            icauchy_tableview.updateRow(row)
+                        }
+                        TextEdit
+                        {
+                            text: display
+                            readOnly: column <= 1 ? true : false
+                            anchors.centerIn: parent
+                            onTextChanged:
+                            {
+                                var current_heliostat_id = huang_tableview.model.rows[row].heliostat_id
+                                switch (column)
+                                {
+                                    case 2: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "mirror_area_", text); break;
+                                    case 3: reflectivity: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "reflectivity_", text); break;
+                                    case 4: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_tracking_", text); break;
+                                    case 5: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_slope_error_", text); break;
+                                }
+                            }
+                        }
+                    }
+                }
+                function updateRow(row)
+                {
+                    var current_heliostat_id = huang_tableview.model.rows[row].heliostat_id
+                    model.setRow(row, {
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            sigma_tracking: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_tracking_"),
+                            sigma_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
+                        })
+                }
+                Component.onCompleted:
+                {
+                    var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
+                    var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
+                    var i = 0;
+                    for (i = 0; i < heliostat_index_list.length; i++)
+                    {
+                        var current_heliostat_id = heliostat_index_list[i]
+                        model.appendRow({
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            sigma_tracking: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_tracking_"),
+                            sigma_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
+                        })
                     }
                 }
             }
@@ -728,7 +952,7 @@ Window {
         Rectangle
         {
             id: huang_with_glass_tableview_boundry
-            width: huang_with_glass_tableview_header_repeater.count * 125 + huang_with_glass_tableview_header_repeater.count - 1 + 40
+            width: huang_with_glass_tableview_header_repeater.count * 130 + huang_with_glass_tableview_header_repeater.count - 1 + 40
             height: 512 / 2
             visible: false
             anchors.top: tableview_text.bottom
@@ -744,13 +968,13 @@ Window {
                 Repeater
                 {
                     id: huang_with_glass_tableview_header_repeater
-                    model: ["Heliostat ID", "Receiver ID", "Mirror Area", "Reflectivity", "σ Tracking", "σ Slope Error"
-                        , "Refractivity", "σ Glass Refract 1st", "σ Glass Reflect", "σ Glass Refract 2nd"]
+                    model: ["Heliostat ID", "Receiver ID", "Mirror Area", "Reflectivity", "σ Tracking", "σ Surface Slope Error"
+                        , "Refractivity", "σ Bottom Slope Error"]
 
                     Rectangle
                     {
                         id: huang_with_glass_tableview_header_rect
-                        width: 125
+                        width: 130
                         height: 25
                         border.width: 1
                         border.color: "#efefef"
@@ -767,6 +991,7 @@ Window {
 
             TableView
             {
+                id: huang_with_glass_tableview
                 anchors.fill: parent
                 anchors.top: parent.top
                 anchors.topMargin: 46
@@ -775,11 +1000,12 @@ Window {
                 columnSpacing: 1
                 rowSpacing: 1
                 boundsBehavior: Flickable.StopAtBounds
+                boundsMovement: Flickable.StopAtBounds
                 ScrollBar.vertical: ScrollBar
                 {
                     anchors.right:parent.right
                     anchors.rightMargin: 0
-                    visible: tableModel.rowCount > 6
+                    visible: TableModel.rowCount > 6
                     background: Rectangle
                     {
                         color:"#666666"
@@ -803,46 +1029,87 @@ Window {
                     TableModelColumn{display: "mirror_area"}
                     TableModelColumn{display: "reflectivity"}
                     TableModelColumn{display: "sigma_tracking"}
-                    TableModelColumn{display: "sigma_slope_error"}
+                    TableModelColumn{display: "sigma_surface_slope_error"}
                     TableModelColumn{display: "refractivity"}
-                    TableModelColumn{display: "sigma_glass_refract_1"}
-                    TableModelColumn{display: "sigma_glass_reflect"}
-                    TableModelColumn{display: "sigma_glass_refract_2"}
-
-                    rows: [
-                        {
-                            heliostat_id: "0",
-                            receiver_id: "1",
-                            mirror_area: "100",
-                            reflectivity: "0.88",
-                            sigma_tracking: "0.0",
-                            sigma_slope_error: "0.0",
-                            refractivity: "0.7",
-                            sigma_glass_refract_1: "0.4, 0.4",
-                            sigma_glass_reflect: "0.2",
-                            sigma_glass_refract_2: "0.5, 0.5"
-                        },
-                        {
-                            heliostat_id: "1"
-                        },
-                        {
-                            heliostat_id: "2"
-                        }
-                    ]
+                    TableModelColumn{display: "sigma_bottom_slope_error"}
                 }
                 delegate: Rectangle
                 {
                     color: "#efefef"
-                    implicitWidth: 125
+                    implicitWidth: 130
                     implicitHeight: 25
                     border.width: 1
                     border.color: "#efefef"
-
-                    TextEdit
+                    MouseArea
                     {
-                        text: display
-                        readOnly: false
-                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered:
+                        {
+                        }
+                        onExited:
+                        {
+                            hflcal_based_tableview.updateRow(row)
+                            unizar_tableview.updateRow(row)
+                            huang_tableview.updateRow(row)
+                            huang_with_glass_tableview.updateRow(row)
+                            icauchy_tableview.updateRow(row)
+                        }
+                        TextEdit
+                        {
+                            text: display
+                            readOnly: column <= 1 ? true : false
+                            anchors.centerIn: parent
+                            onTextChanged:
+                            {
+                                var current_heliostat_id = huang_with_glass_tableview.model.rows[row].heliostat_id
+                                switch (column)
+                                {
+                                    case 2: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "mirror_area_", text); break;
+                                    case 3: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "reflectivity_", text); break;
+                                    case 4: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_tracking_", text); break;
+                                    case 5: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_slope_error_", text); break;
+                                    case 6: analyticFunctionWindowAdapter.setHeliostatWithGlassPara(current_heliostat_id, "refractivity_", text); break;
+                                    case 7: analyticFunctionWindowAdapter.setHeliostatWithGlassPara(current_heliostat_id, "sigma_glass_down_slope_error_", text); break;
+                                }
+                            }
+                        }
+                    }
+                }
+                function updateRow(row)
+                {
+                    var current_heliostat_id = hflcal_based_tableview.model.rows[row].heliostat_id
+                    model.setRow(row, {
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            sigma_tracking: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_tracking_"),
+                            sigma_surface_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
+                            refractivity: analyticFunctionWindowAdapter.getHeliostatWithGlassPara(current_heliostat_id, "refractivity_"),
+                            sigma_bottom_slope_error: analyticFunctionWindowAdapter.getHeliostatWithGlassPara(current_heliostat_id, "sigma_glass_down_slope_error_"),
+                        })
+                }
+                Component.onCompleted:
+                {
+                    var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
+                    var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
+                    var i = 0;
+                    for (i = 0; i < heliostat_index_list.length; i++)
+                    {
+                        var current_heliostat_id = heliostat_index_list[i]
+                        model.appendRow({
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            sigma_tracking: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_tracking_"),
+                            sigma_surface_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
+                            refractivity: analyticFunctionWindowAdapter.getHeliostatWithGlassPara(current_heliostat_id, "refractivity_"),
+                            sigma_bottom_slope_error: analyticFunctionWindowAdapter.getHeliostatWithGlassPara(current_heliostat_id, "sigma_glass_down_slope_error_"),
+                        })
                     }
                 }
             }
@@ -866,7 +1133,7 @@ Window {
                 Repeater
                 {
                     id: icauchy_tableview_header_repeater
-                    model: ["Heliostat ID", "Receiver ID", "Diffusion Coeff"]
+                    model: ["Heliostat ID", "Receiver ID", "Mirror Area", "Reflectivity", "Diffusion Coeff"]
 
                     Rectangle
                     {
@@ -888,6 +1155,7 @@ Window {
 
             TableView
             {
+                id: icauchy_tableview
                 anchors.fill: parent
                 anchors.top: parent.top
                 anchors.topMargin: 46
@@ -896,11 +1164,12 @@ Window {
                 columnSpacing: 1
                 rowSpacing: 1
                 boundsBehavior: Flickable.StopAtBounds
+                boundsMovement: Flickable.StopAtBounds
                 ScrollBar.vertical: ScrollBar
                 {
                     anchors.right:parent.right
                     anchors.rightMargin: 0
-                    visible: tableModel.rowCount > 6
+                    visible: TableModel.rowCount > 6
                     background: Rectangle
                     {
                         color:"#666666"
@@ -921,21 +1190,9 @@ Window {
                 {
                     TableModelColumn{display: "heliostat_id"}
                     TableModelColumn{display: "receiver_id"}
+                    TableModelColumn{display: "mirror_area"}
+                    TableModelColumn{display: "reflectivity"}
                     TableModelColumn{display: "diffusion_coeff"}
-
-                    rows: [
-                        {
-                            heliostat_id: "0",
-                            receiver_id: "1",
-                            diffusion_coeff: "0.2"
-                        },
-                        {
-                            heliostat_id: "1"
-                        },
-                        {
-                            heliostat_id: "2"
-                        }
-                    ]
                 }
                 delegate: Rectangle
                 {
@@ -944,12 +1201,69 @@ Window {
                     implicitHeight: 25
                     border.width: 1
                     border.color: "#efefef"
-
-                    TextEdit
+                    MouseArea
                     {
-                        text: display
-                        readOnly: false
-                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered:
+                        {
+                        }
+                        onExited:
+                        {
+                            hflcal_based_tableview.updateRow(row)
+                            unizar_tableview.updateRow(row)
+                            huang_tableview.updateRow(row)
+                            huang_with_glass_tableview.updateRow(row)
+                            icauchy_tableview.updateRow(row)
+                        }
+                        TextEdit
+                        {
+                            text: display
+                            readOnly: column <= 1 ? true : false
+                            anchors.centerIn: parent
+                            onTextChanged:
+                            {
+                                var current_heliostat_id = icauchy_tableview.model.rows[row].heliostat_id
+                                switch (column)
+                                {
+                                    case 2: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "mirror_area_", text); break;
+                                    case 3: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "reflectivity_", text); break;
+                                    case 4: analyticFunctionWindowAdapter.setModelPara(current_heliostat_id, 
+                                AnalyticFunctionEnums.Convolution, AnalyticFunctionEnums.ICauchy, "diffusion_coeff_", text); break;
+                                }
+                            }
+                        }
+                    }
+                }
+                function updateRow(row)
+                {
+                    var current_heliostat_id = icauchy_tableview.model.rows[row].heliostat_id
+                    model.setRow(row, {
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            diffusion_coeff: analyticFunctionWindowAdapter.getModelPara(current_heliostat_id, 
+                            AnalyticFunctionEnums.Convolution, AnalyticFunctionEnums.ICauchy, "diffusion_coeff_"),
+                        })
+                }
+                Component.onCompleted:
+                {
+                    var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
+                    var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
+                    var i = 0;
+                    for (i = 0; i < heliostat_index_list.length; i++)
+                    {
+                        var current_heliostat_id = heliostat_index_list[i]
+                        model.appendRow({
+                            checkable: true,
+                            heliostat_id: current_heliostat_id,
+                            receiver_id: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "receiver_id_"),
+                            mirror_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "mirror_area_"),
+                            reflectivity: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "reflectivity_"),
+                            diffusion_coeff: analyticFunctionWindowAdapter.getModelPara(current_heliostat_id, AnalyticFunctionEnums.Convolution, AnalyticFunctionEnums.ICauchy, "diffusion_coeff_"),
+                        })
                     }
                 }
             }

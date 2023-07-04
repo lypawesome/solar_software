@@ -19,13 +19,19 @@ namespace solar
     enum class ConvolutionModelType
     {
         kUNIZAR,
-        kCauchy,
+        kiCauchy,
         kHuang,
     };
 
     enum class ModelType
     {
-        kConvolution,
         kSimplified,
+        kConvolution,
+    };
+
+    enum class HeliostatType
+    {
+        kWithoutGlass,
+        kWithGlass,
     };
 } // namespace solar

@@ -23,8 +23,7 @@ namespace solar
 
         private:
             SimplifiedModelType model_type_;
-            ProjectionType projection_type_;
             std::shared_ptr<ModelPara> model_para_;
-            BOOST_DESCRIBE_CLASS(SimplifiedPara, (Para), (), (), (model_type_, projection_type_, model_para_))
+            BOOST_DESCRIBE_CLASS(SimplifiedPara, (Para), (), (), (model_type_, model_para_))
     };
 } // namespace solar

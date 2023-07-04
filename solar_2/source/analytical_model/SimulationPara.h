@@ -2,8 +2,9 @@
 
 #include <boost/describe.hpp>
 
-#include "utils/Para.h"
+#include <utils/Para.h>
 #include <utils/Vec2.h>
+
 
 namespace solar
 {
@@ -16,8 +17,8 @@ namespace solar
             void testPrint() const override;
 #include <utils/class_name.inc>
         private:
-            Vec2 receiver_pixel_size_;
-            Vec2 micro_heliostat_pixel_size_;
+            Vec2 receiver_pixel_size_ = {0, 0};
+            Vec2 micro_heliostat_pixel_size_ = {0, 0};
             BOOST_DESCRIBE_CLASS(SimulationPara, (Para), (), (),
                                  (receiver_pixel_size_, micro_heliostat_pixel_size_))
     };

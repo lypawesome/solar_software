@@ -3,6 +3,7 @@
 #include <boost/describe.hpp>
 
 #include <analytical_model/ModelPara.h>
+#include <utils/HasValue.h>
 
 namespace solar
 {

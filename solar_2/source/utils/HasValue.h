@@ -2,19 +2,11 @@
 
 #include <cmath>
 #include <concepts>
-#include <type_traits>
+
+#include <utils/Concepts.h>
 
 namespace solar
 {
-    template <typename T>
-    concept Pointer = std::is_pointer_v<T>;
-
-    template <typename T>
-    concept ClassWithHasValue = requires(T value) {
-        {
-            value.hasValue()
-        } -> std::same_as<bool>;
-    };
 
     constexpr const int kUndefined = -1;
 
@@ -30,8 +22,12 @@ namespace solar
 
     template <Pointer T> constexpr auto hasValue(const T& input) -> bool { return (!!input); }
 
-    template <ClassWithHasValue T> constexpr auto hasValue(const T& input) -> bool
+    template <ClassWithEmpty T> auto hasValue(const T& input) -> bool { return !input.empty(); }
+
+    template <ClassWithHasValue T> auto hasValue(const T& input) -> bool
     {
         return input.hasValue();
     }
+
+    template <typename T> auto hasValue(const T&) -> bool { return true; }
 } // namespace solar

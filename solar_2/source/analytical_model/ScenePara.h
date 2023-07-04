@@ -2,7 +2,8 @@
 
 #include <boost/describe.hpp>
 
-#include "utils/Para.h"
+#include <utils/Para.h>
+#include <utils/HasValue.h>
 
 #include <memory>
 
@@ -20,8 +21,8 @@ namespace solar
 #include <utils/class_name.inc>
 
         private:
-            double DNI_;                                // 太阳直接辐射强度
-            double CSR_;                                // 太阳光分布参数
+            double DNI_ = kUndefined;                                // 太阳直接辐射强度
+            double CSR_ = kUndefined;                                // 太阳光分布参数
             std::shared_ptr<SunPosition> sun_position_; // 太阳位置
             BOOST_DESCRIBE_CLASS(ScenePara, (Para), (), (), (DNI_, CSR_, sun_position_))
     };
