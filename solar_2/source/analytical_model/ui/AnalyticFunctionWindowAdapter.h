@@ -8,13 +8,15 @@
 
 #include <cstdlib>
 #include <memory>
-#include <qtmetamacros.h>
+#include <unordered_set>
 #include <vector>
+
 
 #include <analytical_model/CommonPara.h>
 #include <analytical_model/Constants.h>
 #include <analytical_model/ScenePara.h>
 #include <analytical_model/SimulationPara.h>
+#include <analytical_model/ui/AnalyticFunctionWindowEnums.h>
 
 namespace solar
 {
@@ -81,6 +83,17 @@ namespace solar
             Q_INVOKABLE void setModelPara(std::uint64_t heliostat_index, ModelType model_type,
                                           int detail_model_type, const QString& key,
                                           const QString& value);
+            Q_INVOKABLE void addRowChanged(const AnalyticFunctionWindowEnums::TableViewType& type,
+                                           const std::uint64_t& row);
+            // NOLINTBEGIN(modernize-use-trailing-return-type)
+            Q_INVOKABLE [[nodiscard]] QVariantList
+            getRowsChanged(const AnalyticFunctionWindowEnums::TableViewType& type) const;
+            // NOLINTEND(modernize-use-trailing-return-type)
+            Q_INVOKABLE void
+            clearRowsChanged(const AnalyticFunctionWindowEnums::TableViewType& type);
+            // NOLINTNEXTLINE(modernize-use-trailing-return-type)
+            Q_INVOKABLE [[nodiscard]] bool dataChangedFromExternal() const;
+            Q_INVOKABLE void dataSyncedWithUI();
 
         private:
             ProjectionType projection_type_ = ProjectionType::kParallel;
@@ -101,9 +114,16 @@ namespace solar
             SimulationPara simulation_para_;
             ScenePara scene_para_;
             CommonPara common_para_;
+
+            // UI only part
+
+            boost::unordered::unordered_flat_map<AnalyticFunctionWindowEnums::TableViewType,
+                                                 std::unordered_set<std::uint64_t>>
+                rows_changed;
+            bool data_changed_from_external = false;
             BOOST_DESCRIBE_CLASS(AnalyticFunctionWindowAdapter, (QObject), (), (),
                                  (projection_type_, model_type_, simplified_model_type_,
                                   convolution_model_type_, simplified_models_, convolution_models_,
-                                  heliostat_paras_))
+                                  heliostat_paras_, rows_changed, data_changed_from_external))
     };
 } // namespace solar

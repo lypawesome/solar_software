@@ -43,11 +43,22 @@ namespace solar
                 WithoutGlass,
                 WithGlass,
             };
-            
+
+            // UI only part
+
+            enum class TableViewType
+            {
+                HFLCALBasedTableView,
+                UNIZARTableView,
+                ICauchyTableView,
+                HuangTableView,
+                HuangWithGlassTableView,
+            };
             Q_ENUM(ProjectionType)
             Q_ENUM(ModelType)
             Q_ENUM(SimplifiedModelType)
             Q_ENUM(ConvolutionModelType)
             Q_ENUM(HeliostatType)
+            Q_ENUM(TableViewType)
     };
 } // namespace solar

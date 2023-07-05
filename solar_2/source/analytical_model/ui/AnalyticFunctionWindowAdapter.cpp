@@ -29,6 +29,12 @@ using namespace solar;
 // Only for test
 AnalyticFunctionWindowAdapter::AnalyticFunctionWindowAdapter()
 {
+    this->rows_changed[AnalyticFunctionWindowEnums::TableViewType::HFLCALBasedTableView] = {};
+    this->rows_changed[AnalyticFunctionWindowEnums::TableViewType::UNIZARTableView] = {};
+    this->rows_changed[AnalyticFunctionWindowEnums::TableViewType::ICauchyTableView] = {};
+    this->rows_changed[AnalyticFunctionWindowEnums::TableViewType::HuangTableView] = {};
+    this->rows_changed[AnalyticFunctionWindowEnums::TableViewType::HuangWithGlassTableView] = {};
+
     auto heliostat_para_0 = std::make_shared<HeliostatPara>();
     heliostat_para_0->setPara(toMemberName("heliostat_id"), 0);
     heliostat_para_0->setPara(toMemberName("receiver_id"), 0);
@@ -438,3 +444,39 @@ void AnalyticFunctionWindowAdapter::setModelPara(std::uint64_t heliostat_index,
         }
     }
 }
+
+void AnalyticFunctionWindowAdapter::addRowChanged(
+    const AnalyticFunctionWindowEnums::TableViewType& type, const std::uint64_t& row)
+{
+    for (auto& [current_type, current_row] : this->rows_changed)
+    {
+        if (current_type != type)
+        {
+            this->rows_changed[current_type].emplace(row);
+        }
+    }
+}
+
+auto AnalyticFunctionWindowAdapter::getRowsChanged(
+    const AnalyticFunctionWindowEnums::TableViewType& type) const -> QVariantList
+{
+    QVariantList list;
+    for (const auto& row : this->rows_changed.at(type))
+    {
+        list.append(row);
+    }
+    return list;
+}
+
+void AnalyticFunctionWindowAdapter::clearRowsChanged(
+    const AnalyticFunctionWindowEnums::TableViewType& type)
+{
+    this->rows_changed[type].clear();
+}
+
+auto AnalyticFunctionWindowAdapter::dataChangedFromExternal() const -> bool
+{
+    return this->data_changed_from_external;
+}
+
+void AnalyticFunctionWindowAdapter::dataSyncedWithUI() { this->data_changed_from_external = false; }

@@ -14,6 +14,22 @@ Window {
     y: Screen.height/2 - height/2
     
     modality: Qt.WindowModal
+    onVisibleChanged:
+    {
+        if (visible)
+        {
+            if (analyticFunctionWindowAdapter.dataChangedFromExternal())
+            {
+                hflcal_based_tableview.updateAll()
+                unizar_tableview.updateAll()
+                icauchy_tableview.updateAll()
+                huang_tableview.updateAll()
+                huang_with_glass_tableview.updateAll()
+
+                analyticFunctionWindowAdapter.dataSyncedWithUI()
+            }
+        }
+    }
     
     Rectangle
     {
@@ -495,6 +511,20 @@ Window {
             height: 512 / 2
             visible: false
             anchors.top: tableview_text.bottom
+            onVisibleChanged:
+            {
+                if (visible)
+                {
+                    var rows_changed = analyticFunctionWindowAdapter.getRowsChanged(AnalyticFunctionEnums.HFLCALBasedTableView)
+                    var i = 0;
+                    for (i = 0; i < rows_changed.length; i++)
+                    {
+                        var current_row = rows_changed[i]
+                        hflcal_based_tableview.updateRow(current_row)
+                    }
+                    analyticFunctionWindowAdapter.clearRowsChanged(AnalyticFunctionEnums.HFLCALBasedTableView)
+                }
+            }
             Row
             {
                 id: hflcal_based_tableview_header
@@ -578,18 +608,17 @@ Window {
                     border.color: "#efefef"
                     MouseArea
                     {
+                        id: hflcal_based_tableview_mousearea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered:
-                        {
-                        }
+                        property bool needs_update: false
                         onExited:
                         {
-                            hflcal_based_tableview.updateRow(row)
-                            unizar_tableview.updateRow(row)
-                            huang_tableview.updateRow(row)
-                            huang_with_glass_tableview.updateRow(row)
-                            icauchy_tableview.updateRow(row)
+                            if (needs_update)
+                            {
+                                hflcal_based_tableview.updateRow(row)
+                                needs_update = false
+                            }
                         }
                         TextEdit
                         {
@@ -606,6 +635,8 @@ Window {
                                     case 4: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_tracking_", text); break;
                                     case 5: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_slope_error_", text); break;
                                 }
+                                analyticFunctionWindowAdapter.addRowChanged(AnalyticFunctionEnums.HFLCALBasedTableView, row)
+                                hflcal_based_tableview_mousearea.needs_update = true
                             }
                         }
                     }
@@ -624,7 +655,7 @@ Window {
                             sigma_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
                         })
                 }
-                Component.onCompleted:
+                function updateAll()
                 {
                     var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
                     var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
@@ -643,6 +674,10 @@ Window {
                         })
                     }
                 }
+                Component.onCompleted:
+                {
+                    hflcal_based_tableview.updateAll()
+                }
             }
         }
         Rectangle
@@ -652,6 +687,21 @@ Window {
             height: 512 / 2
             visible: false
             anchors.top: tableview_text.bottom
+            onVisibleChanged:
+            {
+                if (visible)
+                {
+                    var rows_changed = analyticFunctionWindowAdapter.getRowsChanged(AnalyticFunctionEnums.UNIZARTableView)
+                    var i = 0;
+                    for (i = 0; i < rows_changed.length; i++)
+                    {
+                        var current_row = rows_changed[i]
+                        unizar_tableview.updateRow(current_row)
+                    }
+                    analyticFunctionWindowAdapter.clearRowsChanged(AnalyticFunctionEnums.UNIZARTableView)
+                }
+                
+            }
             Row
             {
                 id: unizar_tableview_header
@@ -733,18 +783,17 @@ Window {
                     border.color: "#efefef"
                     MouseArea
                     {
+                        id: unizar_tableview_mousearea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered:
-                        {
-                        }
+                        property bool needs_update: false
                         onExited:
                         {
-                            hflcal_based_tableview.updateRow(row)
-                            unizar_tableview.updateRow(row)
-                            huang_tableview.updateRow(row)
-                            huang_with_glass_tableview.updateRow(row)
-                            icauchy_tableview.updateRow(row)
+                            if (needs_update)
+                            {
+                                unizar_tableview.updateRow(row)
+                                needs_update = false
+                            }
                         }
                         TextEdit
                         {
@@ -759,6 +808,8 @@ Window {
                                     case 2: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "mirror_area_", text); break;
                                     case 3: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "total_area_", text); break;
                                 }
+                                analyticFunctionWindowAdapter.addRowChanged(AnalyticFunctionEnums.UNIZARTableView, row)
+                                unizar_tableview_mousearea.needs_update = true
                             }
                         }
                     }
@@ -774,7 +825,7 @@ Window {
                             total_area: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "total_area_"),
                         })
                 }
-                Component.onCompleted:
+                function updateAll()
                 {
                     var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
                     var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
@@ -791,6 +842,10 @@ Window {
                         })
                     }
                 }
+                Component.onCompleted:
+                {
+                    unizar_tableview.updateAll()
+                }
             }
         }
         Rectangle
@@ -800,6 +855,20 @@ Window {
             height: 512 / 2
             visible: false
             anchors.top: tableview_text.bottom
+            onVisibleChanged:
+            {
+                if (visible)
+                {
+                    var rows_changed = analyticFunctionWindowAdapter.getRowsChanged(AnalyticFunctionEnums.HuangTableView)
+                    var i = 0;
+                    for (i = 0; i < rows_changed.length; i++)
+                    {
+                        var current_row = rows_changed[i]
+                        huang_tableview.updateRow(current_row)
+                    }
+                    analyticFunctionWindowAdapter.clearRowsChanged(AnalyticFunctionEnums.HuangTableView)
+                }
+            }
             Row
             {
                 id: huang_tableview_header
@@ -883,18 +952,17 @@ Window {
                     border.color: "#efefef"
                     MouseArea
                     {
+                        id: huang_tableview_mousearea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered:
-                        {
-                        }
+                        property bool needs_update: false
                         onExited:
                         {
-                            hflcal_based_tableview.updateRow(row)
-                            unizar_tableview.updateRow(row)
-                            huang_tableview.updateRow(row)
-                            huang_with_glass_tableview.updateRow(row)
-                            icauchy_tableview.updateRow(row)
+                            if (needs_update)
+                            {
+                                huang_tableview.updateRow(row)
+                                needs_update = false
+                            }
                         }
                         TextEdit
                         {
@@ -911,6 +979,8 @@ Window {
                                     case 4: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_tracking_", text); break;
                                     case 5: analyticFunctionWindowAdapter.setHeliostatPara(current_heliostat_id, "sigma_slope_error_", text); break;
                                 }
+                                analyticFunctionWindowAdapter.addRowChanged(AnalyticFunctionEnums.HuangTableView, row)
+                                huang_tableview_mousearea.needs_update = true
                             }
                         }
                     }
@@ -928,7 +998,7 @@ Window {
                             sigma_slope_error: analyticFunctionWindowAdapter.getHeliostatPara(current_heliostat_id, "sigma_slope_error_"),
                         })
                 }
-                Component.onCompleted:
+                function updateAll()
                 {
                     var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
                     var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
@@ -947,6 +1017,10 @@ Window {
                         })
                     }
                 }
+                Component.onCompleted:
+                {
+                    huang_tableview.updateAll()
+                }
             }
         }
         Rectangle
@@ -956,6 +1030,20 @@ Window {
             height: 512 / 2
             visible: false
             anchors.top: tableview_text.bottom
+            onVisibleChanged:
+            {
+                if (visible)
+                {
+                    var rows_changed = analyticFunctionWindowAdapter.getRowsChanged(AnalyticFunctionEnums.HuangWithGlassTableView)
+                    var i = 0;
+                    for (i = 0; i < rows_changed.length; i++)
+                    {
+                        var current_row = rows_changed[i]
+                        huang_with_glass_tableview.updateRow(current_row)
+                    }
+                    analyticFunctionWindowAdapter.clearRowsChanged(AnalyticFunctionEnums.HuangWithGlassTableView)
+                }
+            }
             Row
             {
                 id: huang_with_glass_tableview_header
@@ -1042,18 +1130,17 @@ Window {
                     border.color: "#efefef"
                     MouseArea
                     {
+                        id: huang_with_glass_tableview_mousearea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered:
-                        {
-                        }
+                        property bool needs_update: false
                         onExited:
                         {
-                            hflcal_based_tableview.updateRow(row)
-                            unizar_tableview.updateRow(row)
-                            huang_tableview.updateRow(row)
-                            huang_with_glass_tableview.updateRow(row)
-                            icauchy_tableview.updateRow(row)
+                            if (needs_update)
+                            {
+                                hflcal_based_tableview.updateRow(row)
+                                needs_update = false
+                            }
                         }
                         TextEdit
                         {
@@ -1072,6 +1159,8 @@ Window {
                                     case 6: analyticFunctionWindowAdapter.setHeliostatWithGlassPara(current_heliostat_id, "refractivity_", text); break;
                                     case 7: analyticFunctionWindowAdapter.setHeliostatWithGlassPara(current_heliostat_id, "sigma_glass_down_slope_error_", text); break;
                                 }
+                                analyticFunctionWindowAdapter.addRowChanged(AnalyticFunctionEnums.HuangWithGlassTableView, row)
+                                huang_with_glass_tableview_mousearea.needs_update = true
                             }
                         }
                     }
@@ -1091,7 +1180,7 @@ Window {
                             sigma_bottom_slope_error: analyticFunctionWindowAdapter.getHeliostatWithGlassPara(current_heliostat_id, "sigma_glass_down_slope_error_"),
                         })
                 }
-                Component.onCompleted:
+                function updateAll()
                 {
                     var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
                     var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
@@ -1112,6 +1201,10 @@ Window {
                         })
                     }
                 }
+                Component.onCompleted:
+                {
+                    huang_with_glass_tableview.updateAll()
+                }
             }
         }
         Rectangle
@@ -1121,6 +1214,20 @@ Window {
             height: 512 / 2
             visible: false
             anchors.top: tableview_text.bottom
+            onVisibleChanged:
+            {
+                if (visible)
+                {
+                    var rows_changed = analyticFunctionWindowAdapter.getRowsChanged(AnalyticFunctionEnums.ICauchyTableView)
+                    var i = 0;
+                    for (i = 0; i < rows_changed.length; i++)
+                    {
+                        var current_row = rows_changed[i]
+                        icauchy_tableview.updateRow(current_row)
+                    }
+                    analyticFunctionWindowAdapter.clearRowsChanged(AnalyticFunctionEnums.ICauchyTableView)
+                }
+            }
             Row
             {
                 id: icauchy_tableview_header
@@ -1203,18 +1310,17 @@ Window {
                     border.color: "#efefef"
                     MouseArea
                     {
+                        id: icauchy_tableview_mousearea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered:
-                        {
-                        }
+                        property bool needs_update: false
                         onExited:
                         {
-                            hflcal_based_tableview.updateRow(row)
-                            unizar_tableview.updateRow(row)
-                            huang_tableview.updateRow(row)
-                            huang_with_glass_tableview.updateRow(row)
-                            icauchy_tableview.updateRow(row)
+                            if (needs_update)
+                            {
+                                hflcal_based_tableview.updateRow(row)
+                                needs_update = false
+                            }
                         }
                         TextEdit
                         {
@@ -1231,6 +1337,8 @@ Window {
                                     case 4: analyticFunctionWindowAdapter.setModelPara(current_heliostat_id, 
                                 AnalyticFunctionEnums.Convolution, AnalyticFunctionEnums.ICauchy, "diffusion_coeff_", text); break;
                                 }
+                                analyticFunctionWindowAdapter.addRowChanged(AnalyticFunctionEnums.ICauchyTableView, row)
+                                icauchy_tableview_mousearea.needs_update = true
                             }
                         }
                     }
@@ -1248,7 +1356,7 @@ Window {
                             AnalyticFunctionEnums.Convolution, AnalyticFunctionEnums.ICauchy, "diffusion_coeff_"),
                         })
                 }
-                Component.onCompleted:
+                function updateAll()
                 {
                     var heliostat_index_list = analyticFunctionWindowAdapter.getHeliostatIndices()
                     var heliostat_count = analyticFunctionWindowAdapter.getNumberOfHeliostats()
@@ -1265,6 +1373,10 @@ Window {
                             diffusion_coeff: analyticFunctionWindowAdapter.getModelPara(current_heliostat_id, AnalyticFunctionEnums.Convolution, AnalyticFunctionEnums.ICauchy, "diffusion_coeff_"),
                         })
                     }
+                }
+                Component.onCompleted:
+                {
+                    icauchy_tableview.updateAll()
                 }
             }
         }
